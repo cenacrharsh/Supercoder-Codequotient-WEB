@@ -1,0 +1,48 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+#leftPaneDiv {
+  flex: 1;
+  background-color: wheat;
+  height: 100vh;
+  width: 100vw;
+  padding: 1.2rem;
+}
+
+#rightPaneDiv {
+  flex: 1;
+  background-color: lightgray;
+  height: 100vh;
+  width: 100vw;
+  padding: 1.2rem;
+}
+
+#taskContainer {
+  padding: 1rem;
+  background-color: yellow;
+}
+
+#taskDiv {
+  text-align: left;
+}
+
+#taskDiv:hover {
+  background-color: lightyellow;
+}
+
+.btn {
+  padding: 0.3rem;
+}
+
+#textArea::placeholder {
+  font-size: 40px;
+}
