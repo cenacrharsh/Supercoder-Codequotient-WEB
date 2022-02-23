@@ -1,0 +1,52 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 10px 0 5px;
+}
+
+#heading {
+  margin-bottom: 10px;
+}
+
+#inputArea {
+}
+
+textarea {
+  margin: 0;
+  padding: 0;
+  border: 1px solid black;
+  width: 100%;
+  resize: none;
+  font-size: 16px;
+}
+
+h4 {
+  margin: 0;
+}
+
+#outputArea {
+  background-color: black;
+  height: 100px;
+  color: white;
+}
+
+#submit {
+  margin: 10px;
+}
+
+#submitButton {
+  padding: 5px;
+  color: black;
+  background-color: yellow;
+  cursor: pointer;
+}
+
+#btn:hover {
+  background-color: lightyellow;
+}
