@@ -31,16 +31,33 @@ body {
   background-color: yellow;
 }
 
-#taskDiv {
+.taskDiv {
+  display: flex;
   text-align: left;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
-#taskDiv:hover {
+.taskPara {
+  font-size: 1.2rem;
+}
+
+.tastDeleteBtn {
+}
+
+.taskEditBtn {
+}
+
+.taskReadBtn {
+}
+
+.taskDiv:hover {
   background-color: lightyellow;
 }
 
 .btn {
   padding: 0.3rem;
+  width: 75px;
 }
 
 #textArea::placeholder {
