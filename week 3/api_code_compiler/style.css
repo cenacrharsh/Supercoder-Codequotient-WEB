@@ -10,11 +10,16 @@ body {
   margin: 0 10px 0 5px;
 }
 
-#heading {
-  margin-bottom: 10px;
+h2 {
+  margin: 0;
 }
 
-#inputArea {
+#heading {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
 }
 
 textarea {
@@ -24,10 +29,6 @@ textarea {
   width: 100%;
   resize: none;
   font-size: 16px;
-}
-
-h4 {
-  margin: 0;
 }
 
 #outputArea {
