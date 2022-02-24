@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
 #container {
@@ -14,6 +15,7 @@ body {
   flex: 1;
   background-color: lightgrey;
   padding: 3rem;
+  overflow: auto;
 }
 
 #rightPaneDiv {
@@ -39,16 +41,12 @@ body {
 .taskDiv > p {
   margin: auto 0px;
   font-weight: bold;
-}
-
-.taskReadCheckbox {
-  height: 20px;
-  width: 20px;
-  position: relative;
-  top: 6px;
+  overflow: auto;
 }
 
 .taskButtonDiv {
+  display: flex;
+  justify-content: space-between;
 }
 
 .taskPara {
@@ -60,10 +58,14 @@ body {
   color: grey;
 }
 
-.tastDeleteBtn {
+.taskDeleteBtn {
+  background-color: red;
+  color: white;
 }
 
 .taskEditBtn {
+  background-color: blue;
+  color: white;
 }
 
 .taskReadBtn {
@@ -76,6 +78,9 @@ body {
 .btn {
   padding: 0.3rem;
   width: 75px;
+  margin: 0px 5px;
+  cursor: pointer;
+  font-size: 18px;
 }
 
 #textAreaDiv {
@@ -84,8 +89,6 @@ body {
 }
 
 textarea {
-  margin: 0;
-  padding: 0;
   width: 100%;
   height: 100%;
   resize: none;
@@ -96,4 +99,13 @@ textarea {
 
 textarea::placeholder {
   font-size: 40px;
+}
+
+.taskReadCheckbox {
+  margin: 0px 5px;
+  padding: 0;
+  height: 20px;
+  width: 20px;
+  position: relative;
+  top: 5px;
 }

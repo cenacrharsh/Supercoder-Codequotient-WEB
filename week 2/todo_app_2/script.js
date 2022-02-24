@@ -41,7 +41,7 @@ textArea.addEventListener("keyup", function eventHandler(event) {
     taskDiv.setAttribute("class", "taskDiv");
     taskButtonDiv.setAttribute("class", "taskButtonDiv");
     taskPara.setAttribute("class", "taskPara");
-    taskReadCheckbox.setAttribute("class", "taskReadCheckbox");
+    taskReadCheckbox.setAttribute("class", "btn taskReadCheckbox");
     taskEditBtn.setAttribute("class", "btn taskEditBtn");
     taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
 
@@ -100,59 +100,55 @@ textArea.addEventListener("keyup", function eventHandler(event) {
   }
 });
 
-{
-  //! pulling out stored todos array from local storage & displaying it on screen
-  let storedTodos = localStorage.getItem("todos");
-  if (storedTodos !== null) {
-    todos = JSON.parse(storedTodos);
+//! pulling out stored todos array from local storage & displaying it on screen
+let storedTodos = localStorage.getItem("todos");
+if (storedTodos !== null) {
+  todos = JSON.parse(storedTodos);
 
-    todos.forEach(function (todo) {
-      let taskDiv = document.createElement("div");
-      let taskButtonDiv = document.createElement("div");
-      let taskPara = document.createElement("p");
-      let taskReadCheckbox = document.createElement("input");
-      let taskEditBtn = document.createElement("button");
-      let taskDeleteBtn = document.createElement("button");
+  todos.forEach(function (todo) {
+    let taskDiv = document.createElement("div");
+    let taskButtonDiv = document.createElement("div");
+    let taskPara = document.createElement("p");
+    let taskReadCheckbox = document.createElement("input");
+    let taskEditBtn = document.createElement("button");
+    let taskDeleteBtn = document.createElement("button");
 
-      taskReadCheckbox.setAttribute("type", "checkbox");
-      taskPara.setAttribute("id", `${todo.id}`);
+    taskReadCheckbox.setAttribute("type", "checkbox");
+    taskPara.setAttribute("id", `${todo.id}`);
 
-      taskDiv.setAttribute("class", "taskDiv");
-      taskButtonDiv.setAttribute("class", "taskButtonDiv");
-      taskPara.setAttribute("class", "taskPara");
-      taskReadCheckbox.setAttribute("class", "taskReadCheckbox");
-      taskEditBtn.setAttribute("class", "btn taskEditBtn");
-      taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
+    taskDiv.setAttribute("class", "taskDiv");
+    taskButtonDiv.setAttribute("class", "taskButtonDiv");
+    taskPara.setAttribute("class", "taskPara");
+    taskReadCheckbox.setAttribute("class", "btn taskReadCheckbox");
+    taskEditBtn.setAttribute("class", "btn taskEditBtn");
+    taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
 
-      taskButtonDiv.appendChild(taskReadCheckbox);
-      taskButtonDiv.appendChild(taskEditBtn);
-      taskButtonDiv.appendChild(taskDeleteBtn);
-      taskDiv.appendChild(taskPara);
-      taskDiv.appendChild(taskButtonDiv);
-      taskContainer.appendChild(taskDiv);
+    taskButtonDiv.appendChild(taskReadCheckbox);
+    taskButtonDiv.appendChild(taskEditBtn);
+    taskButtonDiv.appendChild(taskDeleteBtn);
+    taskDiv.appendChild(taskPara);
+    taskDiv.appendChild(taskButtonDiv);
+    taskContainer.appendChild(taskDiv);
 
-      taskPara.innerHTML = todo.text;
-      taskDeleteBtn.innerHTML = "Delete";
-      taskEditBtn.innerHTML = "Edit";
+    taskPara.innerHTML = todo.text;
+    taskDeleteBtn.innerHTML = "Delete";
+    taskEditBtn.innerHTML = "Edit";
 
-      //! Delete Button Functionality
-      taskDeleteBtn.addEventListener("click", deleteClickHandler);
+    //! Delete Button Functionality
+    taskDeleteBtn.addEventListener("click", deleteClickHandler);
 
-      //! Edit Button Functionality
-      taskEditBtn.addEventListener("click", editClickHandler);
+    //! Edit Button Functionality
+    taskEditBtn.addEventListener("click", editClickHandler);
 
-      //! Task Completed Checkbox Functionality
-      taskReadCheckbox.addEventListener("change", checkboxClickHandler);
-    });
-  }
+    //! Task Completed Checkbox Functionality
+    taskReadCheckbox.addEventListener("change", checkboxClickHandler);
+  });
 }
 
 //! Event Handler for Delete
 function deleteClickHandler(event) {
   var deleteBtn = event.target;
-  console.log(deleteBtn);
   var todoDiv = deleteBtn.parentNode.parentNode;
-  console.log(todoDiv);
   var todoContainer = todoDiv.parentNode;
   var taskId = todoDiv.children[0].id;
 
@@ -207,9 +203,6 @@ function checkboxClickHandler(event) {
   var taskPara = todoDiv.children[0];
   var taskCompletedStatus = todoDiv.children[1].children[0].checked;
   var taskId = taskPara.id;
-
-  console.log(taskPara);
-  console.log(taskId);
 
   if (taskCompletedStatus) {
     taskCompletedStatus = true;
