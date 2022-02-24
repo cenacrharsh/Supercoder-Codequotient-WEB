@@ -42,7 +42,10 @@ body {
 }
 
 .taskReadCheckbox {
-  margin: auto 0px;
+  height: 20px;
+  width: 20px;
+  position: relative;
+  top: 6px;
 }
 
 .taskButtonDiv {
@@ -50,6 +53,11 @@ body {
 
 .taskPara {
   font-size: 1.2rem;
+}
+
+.taskCompletedStatus {
+  text-decoration: line-through;
+  color: grey;
 }
 
 .tastDeleteBtn {

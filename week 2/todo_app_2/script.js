@@ -1,5 +1,8 @@
 //# Global Variables
+//! array of todo objects
 let todos = [];
+
+//! object containing id and text of selected todo
 let selectedTodo = null;
 
 //# Fetching HTML elements
@@ -13,6 +16,7 @@ textArea.addEventListener("keyup", function eventHandler(event) {
   //* pulling out value from textArea
   let value = textArea.value;
 
+  //> when Enter is clicked while creating new task
   if (keyCode === "Enter" && value !== "" && selectedTodo === null) {
     //* to stop cursor going to next line after hitting enter
     event.preventDefault();
@@ -21,7 +25,7 @@ textArea.addEventListener("keyup", function eventHandler(event) {
     let todo = {
       id: generateUniqueId(),
       text: value,
-      completed: false,
+      isCompleted: false,
     };
 
     let taskDiv = document.createElement("div");
@@ -37,7 +41,7 @@ textArea.addEventListener("keyup", function eventHandler(event) {
     taskDiv.setAttribute("class", "taskDiv");
     taskButtonDiv.setAttribute("class", "taskButtonDiv");
     taskPara.setAttribute("class", "taskPara");
-    taskReadCheckbox.setAttribute("class", "btn taskReadCheckbox");
+    taskReadCheckbox.setAttribute("class", "taskReadCheckbox");
     taskEditBtn.setAttribute("class", "btn taskEditBtn");
     taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
 
@@ -62,13 +66,17 @@ textArea.addEventListener("keyup", function eventHandler(event) {
 
     //! Edit Button Functionality
     taskEditBtn.addEventListener("click", editClickHandler);
+
+    //! Task Completed Checkbox Functionality
+    taskReadCheckbox.addEventListener("change", checkboxClickHandler);
   }
 
+  //> when Enter is clicked while editing existing task
   if (keyCode === "Enter" && value !== "" && selectedTodo !== null) {
-    let inputText = textArea.value;
-    let taskText = selectedTodo.innerHTML;
+    let newInputText = textArea.value;
+    let taskId = selectedTodo.id;
 
-    selectedTodo.innerHTML = inputText;
+    selectedTodo.taskPara.innerHTML = newInputText;
 
     selectedTodo = null;
 
@@ -79,53 +87,64 @@ textArea.addEventListener("keyup", function eventHandler(event) {
 
     if (storedItemsInLocalStorage !== null) {
       todos = JSON.parse(storedItemsInLocalStorage);
-    }
-    var index = todos.indexOf(taskText);
 
-    todos[index] = inputText;
-    localStorage.setItem("todos", JSON.stringify(todos));
+      //* updating task text of selected task object in local storage
+      todos.forEach(function (todo) {
+        if (todo.id === taskId) {
+          todo.text = newInputText;
+        }
+      });
+
+      localStorage.setItem("todos", JSON.stringify(todos));
+    }
   }
 });
 
-//! pulling out stored todos array from local storage & displaying it on screen
-let storedTodos = localStorage.getItem("todos");
-if (storedTodos !== null) {
-  todos = JSON.parse(storedTodos);
+{
+  //! pulling out stored todos array from local storage & displaying it on screen
+  let storedTodos = localStorage.getItem("todos");
+  if (storedTodos !== null) {
+    todos = JSON.parse(storedTodos);
 
-  todos.forEach(function (todo) {
-    let taskDiv = document.createElement("div");
-    let taskButtonDiv = document.createElement("div");
-    let taskPara = document.createElement("p");
-    let taskReadCheckbox = document.createElement("input");
-    let taskEditBtn = document.createElement("button");
-    let taskDeleteBtn = document.createElement("button");
+    todos.forEach(function (todo) {
+      let taskDiv = document.createElement("div");
+      let taskButtonDiv = document.createElement("div");
+      let taskPara = document.createElement("p");
+      let taskReadCheckbox = document.createElement("input");
+      let taskEditBtn = document.createElement("button");
+      let taskDeleteBtn = document.createElement("button");
 
-    taskReadCheckbox.setAttribute("type", "checkbox");
-    taskPara.setAttribute("id", `${todo.id}`);
+      taskReadCheckbox.setAttribute("type", "checkbox");
+      taskPara.setAttribute("id", `${todo.id}`);
 
-    taskDiv.setAttribute("class", "taskDiv");
-    taskButtonDiv.setAttribute("class", "taskButtonDiv");
-    taskPara.setAttribute("class", "taskPara");
-    taskReadCheckbox.setAttribute("class", "btn taskReadCheckbox");
-    taskEditBtn.setAttribute("class", "btn taskEditBtn");
-    taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
+      taskDiv.setAttribute("class", "taskDiv");
+      taskButtonDiv.setAttribute("class", "taskButtonDiv");
+      taskPara.setAttribute("class", "taskPara");
+      taskReadCheckbox.setAttribute("class", "taskReadCheckbox");
+      taskEditBtn.setAttribute("class", "btn taskEditBtn");
+      taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
 
-    taskButtonDiv.appendChild(taskReadCheckbox);
-    taskButtonDiv.appendChild(taskEditBtn);
-    taskButtonDiv.appendChild(taskDeleteBtn);
-    taskDiv.appendChild(taskPara);
-    taskDiv.appendChild(taskButtonDiv);
-    taskContainer.appendChild(taskDiv);
+      taskButtonDiv.appendChild(taskReadCheckbox);
+      taskButtonDiv.appendChild(taskEditBtn);
+      taskButtonDiv.appendChild(taskDeleteBtn);
+      taskDiv.appendChild(taskPara);
+      taskDiv.appendChild(taskButtonDiv);
+      taskContainer.appendChild(taskDiv);
 
-    taskPara.innerHTML = todo.text;
-    taskDeleteBtn.innerHTML = "Delete";
-    taskEditBtn.innerHTML = "Edit";
+      taskPara.innerHTML = todo.text;
+      taskDeleteBtn.innerHTML = "Delete";
+      taskEditBtn.innerHTML = "Edit";
 
-    //! Delete Button Functionality
-    taskDeleteBtn.addEventListener("click", deleteClickHandler);
-    //! Edit Button Functionality
-    taskEditBtn.addEventListener("click", editClickHandler);
-  });
+      //! Delete Button Functionality
+      taskDeleteBtn.addEventListener("click", deleteClickHandler);
+
+      //! Edit Button Functionality
+      taskEditBtn.addEventListener("click", editClickHandler);
+
+      //! Task Completed Checkbox Functionality
+      taskReadCheckbox.addEventListener("change", checkboxClickHandler);
+    });
+  }
 }
 
 //! Event Handler for Delete
@@ -136,9 +155,8 @@ function deleteClickHandler(event) {
   console.log(todoDiv);
   var todoContainer = todoDiv.parentNode;
   var taskId = todoDiv.children[0].id;
-  console.log(typeof taskId);
 
-  //> update in local storage
+  //> updating todos in local storage
   var storedItemsInLocalStorage = localStorage.getItem("todos");
 
   if (storedItemsInLocalStorage !== null) {
@@ -163,15 +181,62 @@ function deleteClickHandler(event) {
 //! Event Handler for Edit
 function editClickHandler(event) {
   var editBtn = event.target;
-  var todoDiv = editBtn.parentNode;
+  var todoDiv = editBtn.parentNode.parentNode;
   var taskText = todoDiv.children[0].innerHTML;
+  var taskId = todoDiv.children[0].id;
 
-  selectedTodo = todoDiv.children[0];
+  //* setting selected todo's id to selectedTodoId
+  let selectedTodoId = taskId;
+  let selectedTodoText = taskText;
 
-  //> add task text in text area
+  let selectedTodoObj = {
+    id: selectedTodoId,
+    taskPara: todoDiv.children[0],
+  };
+
+  selectedTodo = selectedTodoObj;
+
+  //> add selected task text in text area
   textArea.value = taskText;
 }
 
+//! Event Handler for Checkbox
+function checkboxClickHandler(event) {
+  var checkbox = event.target;
+  var todoDiv = checkbox.parentNode.parentNode;
+  var taskPara = todoDiv.children[0];
+  var taskCompletedStatus = todoDiv.children[1].children[0].checked;
+  var taskId = taskPara.id;
+
+  console.log(taskPara);
+  console.log(taskId);
+
+  if (taskCompletedStatus) {
+    taskCompletedStatus = true;
+    taskPara.classList.add("taskCompletedStatus");
+  } else {
+    taskCompletedStatus = false;
+    taskPara.classList.remove("taskCompletedStatus");
+  }
+
+  //> updating todos in local storage
+  var storedItemsInLocalStorage = localStorage.getItem("todos");
+
+  if (storedItemsInLocalStorage !== null) {
+    todos = JSON.parse(storedItemsInLocalStorage);
+
+    //* updating task completed status of selected task object in local storage
+    todos.forEach(function (todo) {
+      if (todo.id === taskId) {
+        todo.isCompleted = taskCompletedStatus;
+      }
+    });
+
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }
+}
+
+//! Function to Generate Unique ID
 function generateUniqueId() {
   return JSON.stringify(Math.floor(Math.random() * Date.now()));
 }
