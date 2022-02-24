@@ -24,9 +24,6 @@ body {
   padding: 3rem;
 }
 
-#taskContainer {
-}
-
 .taskDiv {
   display: flex;
   text-align: left;
@@ -66,9 +63,6 @@ body {
 .taskEditBtn {
   background-color: blue;
   color: white;
-}
-
-.taskReadBtn {
 }
 
 .taskDiv:hover {
