@@ -116,8 +116,14 @@ if (storedTodos !== null) {
     taskReadCheckbox.setAttribute("type", "checkbox");
     taskPara.setAttribute("id", `${todo.id}`);
 
-    //* checking checkbox if true in local storage
-    taskReadCheckbox.checked = todo.isCompleted;
+    //> if todo.isCompleted is true in local storage
+    if (todo.isCompleted) {
+      //* checking checkbox
+      taskReadCheckbox.checked = todo.isCompleted;
+
+      //* adding class .taskCompletedStatus to taskPara
+      taskPara.classList.add("taskCompletedStatus");
+    }
 
     taskDiv.setAttribute("class", "taskDiv");
     taskButtonDiv.setAttribute("class", "taskButtonDiv");
@@ -208,10 +214,8 @@ function checkboxClickHandler(event) {
   var taskId = taskPara.id;
 
   if (taskCompletedStatus) {
-    taskCompletedStatus = true;
     taskPara.classList.add("taskCompletedStatus");
   } else {
-    taskCompletedStatus = false;
     taskPara.classList.remove("taskCompletedStatus");
   }
 
