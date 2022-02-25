@@ -4,9 +4,41 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
     <title>StopWatch</title>
   </head>
   <body>
-    <div id="container"></div>
+    <div id="container">
+      <div id="timer">
+        <div id="clocks">
+          <div id="hour">
+            <div id="hourLeft">0</div>
+            <div id="hourRight">0</div>
+          </div>
+          :
+          <div id="minute">
+            <div id="minuteLeft">0</div>
+            <div id="minuteRight">0</div>
+          </div>
+          :
+          <div id="second">
+            <div id="secondLeft">0</div>
+            <div id="secondRight">0</div>
+          </div>
+        </div>
+      </div>
+      <div id="controls">
+        <button id="lapBtn" class="btn">Lap</button>
+        <button id="startBtn" class="btn">Start</button>
+      </div>
+      <div id="laps">lap</div>
+    </div>
+    <script src="./script.js"></script>
   </body>
 </html>

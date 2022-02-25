@@ -1,0 +1,58 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: black;
+}
+
+#container {
+  height: 100vh;
+  width: 60vw;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  margin: auto;
+}
+
+#timer {
+  flex: 1;
+}
+
+#clocks {
+  display: flex;
+  font-size: 4rem;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #ff8c00;
+}
+
+#hour,
+#minute,
+#second {
+  display: flex;
+}
+
+#controls {
+  flex: 1;
+  background-color: lightgreen;
+  display: flex;
+  justify-content: space-between;
+}
+
+#laps {
+  flex: 2;
+  background-color: lightyellow;
+}
+
+.btn {
+  height: 75px;
+  width: 75px;
+  border: 2px solid black;
+  border-radius: 50%;
+  margin: auto auto;
+  padding: 0;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+}
