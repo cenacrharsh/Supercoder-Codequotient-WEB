@@ -116,6 +116,9 @@ if (storedTodos !== null) {
     taskReadCheckbox.setAttribute("type", "checkbox");
     taskPara.setAttribute("id", `${todo.id}`);
 
+    //* checking checkbox if true in local storage
+    taskReadCheckbox.checked = todo.isCompleted;
+
     taskDiv.setAttribute("class", "taskDiv");
     taskButtonDiv.setAttribute("class", "taskButtonDiv");
     taskPara.setAttribute("class", "taskPara");
