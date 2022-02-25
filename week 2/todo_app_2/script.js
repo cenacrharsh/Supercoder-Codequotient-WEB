@@ -116,6 +116,13 @@ if (storedTodos !== null) {
     taskReadCheckbox.setAttribute("type", "checkbox");
     taskPara.setAttribute("id", `${todo.id}`);
 
+    taskDiv.setAttribute("class", "taskDiv");
+    taskButtonDiv.setAttribute("class", "taskButtonDiv");
+    taskPara.setAttribute("class", "taskPara");
+    taskReadCheckbox.setAttribute("class", "btn taskReadCheckbox");
+    taskEditBtn.setAttribute("class", "btn taskEditBtn");
+    taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
+
     //> if todo.isCompleted is true in local storage
     if (todo.isCompleted) {
       //* checking checkbox
@@ -124,13 +131,6 @@ if (storedTodos !== null) {
       //* adding class .taskCompletedStatus to taskPara
       taskPara.classList.add("taskCompletedStatus");
     }
-
-    taskDiv.setAttribute("class", "taskDiv");
-    taskButtonDiv.setAttribute("class", "taskButtonDiv");
-    taskPara.setAttribute("class", "taskPara");
-    taskReadCheckbox.setAttribute("class", "btn taskReadCheckbox");
-    taskEditBtn.setAttribute("class", "btn taskEditBtn");
-    taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
 
     taskButtonDiv.appendChild(taskReadCheckbox);
     taskButtonDiv.appendChild(taskEditBtn);
