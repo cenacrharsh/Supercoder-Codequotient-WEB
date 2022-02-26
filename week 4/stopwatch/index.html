@@ -15,29 +15,12 @@
   </head>
   <body>
     <div id="container">
-      <div id="timer">
-        <div id="clocks">
-          <div id="hour">
-            <div id="hourLeft">0</div>
-            <div id="hourRight">0</div>
-          </div>
-          :
-          <div id="minute">
-            <div id="minuteLeft">0</div>
-            <div id="minuteRight">0</div>
-          </div>
-          :
-          <div id="second">
-            <div id="secondLeft">0</div>
-            <div id="secondRight">0</div>
-          </div>
-        </div>
-      </div>
+      <div id="stopwatch">00:00:00</div>
       <div id="controls">
-        <button id="lapBtn" class="btn">Lap</button>
         <button id="startBtn" class="btn">Start</button>
+        <button id="lapBtn" class="btn" disabled="false">Lap</button>
       </div>
-      <div id="laps">lap</div>
+      <div id="lapsContainer"></div>
     </div>
     <script src="./script.js"></script>
   </body>

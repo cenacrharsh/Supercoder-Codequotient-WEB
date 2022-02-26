@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background-color: black;
+  background-color: #1c1d31;
 }
 
 #container {
@@ -14,11 +14,8 @@ body {
   margin: auto;
 }
 
-#timer {
+#stopwatch {
   flex: 1;
-}
-
-#clocks {
   display: flex;
   font-size: 4rem;
   justify-content: center;
@@ -27,22 +24,18 @@ body {
   color: #ff8c00;
 }
 
-#hour,
-#minute,
-#second {
-  display: flex;
-}
-
 #controls {
   flex: 1;
-  background-color: lightgreen;
+  background-color: #333446;
   display: flex;
   justify-content: space-between;
+  border-radius: 5px;
 }
 
-#laps {
+#lapsContainer {
   flex: 2;
-  background-color: lightyellow;
+  overflow: auto;
+  margin-bottom: 10px;
 }
 
 .btn {
@@ -55,4 +48,33 @@ body {
   cursor: pointer;
   font-weight: bold;
   font-size: 18px;
+}
+
+.lapDiv {
+  display: flex;
+  justify-content: space-around;
+  height: 60px;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 18px;
+  background-color: #333446;
+  color: #eeeeee;
+  border-radius: 5px;
+}
+
+#startBtn {
+  background-color: lightgreen;
+  color: black;
+}
+
+#lapBtn {
+  color: black;
+  background-color: rgba(239, 239, 239, 0.3);
+}
+
+#lapBtn:disabled,
+#lapBtn[disabled] {
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
 }
