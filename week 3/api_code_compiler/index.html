@@ -5,6 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap"
+      rel="stylesheet"
+    />
     <title>Text Editor</title>
   </head>
   <body>
@@ -13,7 +19,7 @@
         <h2>Type Your Code</h2>
 
         <form>
-          <label> Select Language </label>
+          <label id="selectLanguageLabel"> Select Language </label>
           <select id="languageSelector">
             <option value="7">C</option>
             <option value="77">C++</option>
@@ -35,6 +41,7 @@
       <div id="outputArea">OUTPUT:</div>
       <div id="submit">
         <button id="submitButton">Compile</button>
+        <div id="animation"></div>
       </div>
     </div>
 

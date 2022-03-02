@@ -2,6 +2,7 @@ const submitButton = document.getElementById("submitButton");
 const languageSelector = document.getElementById("languageSelector");
 const textArea = document.getElementById("input");
 const outputScreen = document.getElementById("outputArea");
+const animationDiv = document.getElementById("animation");
 
 //! Adding Click Event Listener to Compile Button
 
@@ -17,6 +18,9 @@ submitButton.addEventListener("click", function (event) {
 
   //> Converting Data to a String
   var postData = JSON.stringify(postObj);
+
+  //> Adding class loader to div to start loading animation
+  animationDiv.classList.add("loader");
 
   //> Making POST request to API
   var request = new XMLHttpRequest();
@@ -52,6 +56,9 @@ submitButton.addEventListener("click", function (event) {
 
             //* If object's data field is empty it means result is not ready or removed from server
             if (responseData !== null) {
+              //> Removing class loader to div to stop loading animation
+              animationDiv.classList.remove("loader");
+
               //* extracting output & errors from data object, if error occurs output is empty("")
               var errors = responseData.errors;
               var output = responseData.output;

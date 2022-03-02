@@ -89,6 +89,9 @@ lapBtn.addEventListener("click", function (event) {
     stopwatch.innerHTML = toHHMMSS(totalTimeElapsed);
 
     lapsContainer.innerHTML = "";
+    prevLapTime = 0;
+    lapCount = 0;
+    isTimerOn = false;
   }
 });
 
