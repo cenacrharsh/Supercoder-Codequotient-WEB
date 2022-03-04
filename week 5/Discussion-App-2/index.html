@@ -22,7 +22,7 @@
       <div id="two-box">
         <div id="left-div">
           <div id="left-div-heading">
-            <button>New Question Form</button>
+            <button class="btn">New Question Form</button>
             <input type="text" placeholder="Search Questions..." />
           </div>
           <div id="left-div-question-panel"></div>
@@ -32,19 +32,21 @@
           <div id="right-div-question-form">
             <h2>Welcome to Discussion Portal !</h2>
             <p>Enter a Subject and Question to get started</p>
-            <div>
-              <input type="text" placeholder="Subject" />
-            </div>
-            <div>
-              <textarea
-                name="question-description"
-                id="question-description"
-                cols="30"
-                rows="10"
-                placeholder="Ouestion"
-              ></textarea>
-            </div>
-            <button>Submit</button>
+            <form id="right-div-question-form-items">
+              <div>
+                <input type="text" placeholder="Subject" />
+              </div>
+              <div>
+                <textarea
+                  name="question-description"
+                  id="question-description"
+                  cols="30"
+                  rows="10"
+                  placeholder="Ouestion"
+                ></textarea>
+              </div>
+              <button class="btn">Submit</button>
+            </form>
           </div>
 
           <div id="right-div-question-resolve-form">
@@ -52,13 +54,13 @@
               <h2>Question</h2>
               <div id="right-div-question-panel"></div>
               <div id="right-div-question-buttons">
-                <button>Upvote</button>
-                <button>Downvote</button>
-                <button>Resolve</button>
+                <button class="questionBtn btn">Upvote</button>
+                <button class="questionBtn btn">Downvote</button>
+                <button class="questionBtn btn">Resolve</button>
               </div>
             </div>
             <div id="response">
-              <h2>Heading</h2>
+              <h2>Response</h2>
               <div id="right-div-response-panel"></div>
             </div>
             <div id="add-response">
@@ -75,7 +77,7 @@
                   placeholder="Enter Comment"
                 ></textarea>
               </div>
-              <button>Submit</button>
+              <button class="btn">Submit</button>
             </div>
           </div>
         </div>

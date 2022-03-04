@@ -1,9 +1,30 @@
-body {
+*,
+*:before,
+*:after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+body {
   font-family: "Poppins", sans-serif;
   background-color: blueviolet;
+  overflow: hidden;
+}
+
+h1,
+h2 {
+  margin: 0;
+}
+
+.btn {
+  padding: 5px;
+  margin: 5px;
+  background-color: #0069ff;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
 }
 
 #container {
@@ -27,41 +48,103 @@ body {
 }
 
 #left-div {
-  background-color: lightblue;
+  background-color: lightgrey;
   flex: 40%;
 }
 
 #left-div-heading {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   margin: 10px 0px;
 }
 
+#left-div-heading > button {
+  padding: 5px;
+  margin: 0px 5px;
+  flex: 40%;
+}
+
+#left-div-heading > input {
+  padding: 5px;
+  margin: 0px 5px;
+  flex: 60%;
+}
+
 #left-div-question-panel {
+  background-color: lightskyblue;
 }
 
 #right-div {
-  background-color: lightgray;
+  background-color: whitesmoke;
   flex: 60%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 
 #right-div-question-form {
-  background-color: green;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  justify-content: center;
+  margin: 0px auto;
+  /* display: none; */
+}
+
+#right-div-question-form > h2 {
+  font-size: 30px;
+  font-weight: bold;
   margin: 5px;
-  padding: 10px;
-  display: none;
+}
+
+#right-div-question-form > p {
+  font-weight: bold;
+  margin: 5px;
+}
+
+#right-div-question-form-items > div {
+  margin: 5px;
+}
+
+#right-div-question-form-items > button {
+  margin: 5px;
+  border: none;
 }
 
 #right-div-question-resolve-form {
-  /* display: block; */
+  height: 100%;
+  background-color: red;
+  margin: 0px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  display: none;
 }
 
-h1,
-h2 {
-  margin: 0;
+#question {
+  flex: 25%;
+}
+
+#right-div-question-panel {
+  background-color: lightcoral;
+}
+
+#right-div-question-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.questionBtn {
+  flex: 1;
+}
+
+#response {
+  flex: 25%;
+  display: block;
+}
+
+#add-response {
+  flex: 50%;
 }
