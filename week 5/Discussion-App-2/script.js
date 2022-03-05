@@ -2,9 +2,7 @@
 const questionSubmitBtnNode = document.getElementById(
   "right-div-question-form-items-submit"
 );
-const leftDivQuestPanelNode = document.getElementById(
-  "left-div-question-panel"
-);
+const leftDivQuesPanelNode = document.getElementById("left-div-question-panel");
 const questionSubjectNode = document.getElementById("question-subject");
 const questionDescriptionNode = document.getElementById("question-description");
 const rightDivQuesFormNode = document.getElementById("right-div-question-form");
@@ -22,15 +20,65 @@ const addResponseNode = document.getElementById("add-response");
 const addCommentBtnNode = document.getElementById("addCommentBtn");
 const commentorNameNode = document.getElementById("commentorName");
 const commentDescriptionNode = document.getElementById("commentDescription");
-const rightDivResponsePanel = document.getElementById(
+const rightDivResponsePanelNode = document.getElementById(
   "right-div-response-panel"
 );
+const newQuesFormBtnNode = document.getElementById("newQuesFormBtn");
+const searchQuesNode = document.getElementById("searchQues");
 
-// listen to value change
+//! listen for click on new ques form btn
+newQuesFormBtnNode.addEventListener("click", newQuesFormHandler);
 
-// filter result
+function newQuesFormHandler() {
+  hideResponseForm();
+  displayQuestionForm();
+}
 
-// clear all questions
+//! listen to value change on search question input
+searchQuesNode.addEventListener("keyup", function (event) {
+  filterQues(event.target.value);
+});
+
+//! filter result according to search text
+function filterQues(searchText) {
+  let allQues = getAllQuesFromLocalStorage();
+
+  if (searchText) {
+    clearLeftDivQuesPanel();
+
+    let filteredQues = allQues.filter(function (ques) {
+      if (ques.subject.includes(searchText)) {
+        return true;
+      }
+    });
+
+    if (filteredQues.length) {
+      filteredQues.forEach(function (ques) {
+        appendQuesToLeftDivQuesPanel(ques);
+      });
+    } else {
+      printNoMatchFound();
+    }
+  } else {
+    clearLeftDivQuesPanel();
+
+    allQues.forEach(function (ques) {
+      appendQuesToLeftDivQuesPanel(ques);
+    });
+  }
+}
+
+//! clear all questions in left div ques panel
+function clearLeftDivQuesPanel() {
+  leftDivQuesPanelNode.innerHTML = "";
+}
+
+//! print No match found if no ques matches search text
+function printNoMatchFound() {
+  let msgNode = document.createElement("h2");
+  msgNode.innerHTML = "No Matches Found!";
+  leftDivQuesPanelNode.appendChild(msgNode);
+}
 
 //! display all exixting questions stored in local storage
 function onLoad() {
@@ -54,13 +102,16 @@ function questionSubmitHandler(event) {
   let question = {
     subject: questionSubjectNode.value,
     description: questionDescriptionNode.value,
+    responses: [],
+    upvotes: 0,
+    downvotes: 0,
   };
 
   appendQuesToLeftDivQuesPanel(question);
   saveQuesToLocalStorage(question);
 }
 
-//! save question to local sotrage
+//! save question to local storage
 function saveQuesToLocalStorage(question) {
   //* get all qiestions first and push the new qurstion and then store again in storage
   let quesStoredInLocalStorage = getAllQuesFromLocalStorage();
@@ -91,20 +142,22 @@ function appendQuesToLeftDivQuesPanel(question) {
   const quesUpvotesNode = document.createElement("p");
   const quesDownvotesNode = document.createElement("p");
 
+  quesDivNode.setAttribute("id", question.subject);
+
   quesSubjectNode.innerHTML = question.subject;
   quesDescriptionNode.innerHTML = question.description;
-  quesUpvotesNode.innerHTML = "Upvotes: " + "0";
-  quesDownvotesNode.innerHTML = "Downvotes: " + "0";
+  quesUpvotesNode.innerHTML = "Upvotes: " + question.upvotes;
+  quesDownvotesNode.innerHTML = "Downvotes: " + question.downvotes;
 
   quesDivNode.appendChild(quesSubjectNode);
   quesDivNode.appendChild(quesDescriptionNode);
   quesDivNode.appendChild(quesUpvotesNode);
   quesDivNode.appendChild(quesDownvotesNode);
 
-  leftDivQuestPanelNode.appendChild(quesDivNode);
+  leftDivQuesPanelNode.appendChild(quesDivNode);
 
   //* adding click event listener on quesDivNode
-  quesDivNode.addEventListener("click", questionClickHandler(question));
+  quesDivNode.onclick = questionClickHandler(question);
 }
 
 // clear question form
@@ -116,8 +169,9 @@ function questionClickHandler(question) {
     //* hide right div question form
     hideQuestionForm();
 
-    //* clear previous question details
+    //* clear previous question details & response details
     rightDivQuesPanelNode.innerHTML = "";
+    rightDivResponsePanelNode.innerHTML = "";
 
     //* display resposne form
     displayResponseForm();
@@ -126,41 +180,125 @@ function questionClickHandler(question) {
     appendQuesToRightDivQuesPanel(question);
 
     //* show all previous responses
+    // setupResponsePanel(question);
+
+    let responses = question.responses;
+    responses.forEach(function (response) {
+      appendResponseToRightDivResponsePanelNode(response);
+    });
 
     //* add click event listener on response, upvote & downvote button
-    resolveBtnNode.onclick = quesResolveHandler;
+    resolveBtnNode.onclick = quesResolveHandler(question);
+    upvoteBtnNode.onclick = quesUpvoteHandler(question);
+    downvoteBtnNode.onclick = quesDownvoteHandler(question);
 
     //* add click event listener on add comment button
-    addCommentBtnNode.onclick = addCommentHandler;
+    addCommentBtnNode.onclick = addCommentHandler(question);
   };
 }
 
-// upvotes
-
-//downVote
-
-// update question UI
-
-//* get question container from DOM
-
-//! listen for click on resolve button
-function quesResolveHandler() {
-  addResponseNode.style.display = "block";
-}
-
-function addCommentHandler() {
-  let response = {
-    name: commentorNameNode.value,
-    description: commentDescriptionNode.value,
+//! upvote ques
+function quesUpvoteHandler(question) {
+  return function () {
+    question.upvotes++;
+    updateQuesInLocalStorage(question);
+    updateQuestionUI(question);
   };
-
-  console.log(response);
-
-  appendResponseToRightDivResponsePanel(response);
 }
+
+//! downvote ques
+function quesDownvoteHandler(question) {
+  return function () {
+    question.downvotes++;
+    updateQuesInLocalStorage(question);
+    updateQuestionUI(question);
+  };
+}
+
+//! update ques in local storage
+function updateQuesInLocalStorage(updatedQuestion) {
+  let allQues = getAllQuesFromLocalStorage();
+
+  let revisedQuestions = allQues.map(function (ques) {
+    if (updatedQuestion.subject === ques.subject) {
+      return updatedQuestion;
+    }
+
+    return ques;
+  });
+
+  localStorage.setItem("questions", JSON.stringify(revisedQuestions));
+}
+
+//! update selected question UI after upvote/downvote
+function updateQuestionUI(question) {
+  //* get question container from DOM
+  let quesContainerNode = document.getElementById(question.subject);
+
+  quesContainerNode.childNodes[2].innerHTML = "Upvotes: " + question.upvotes;
+  quesContainerNode.childNodes[3].innerHTML =
+    "Downvotes: " + question.downvotes;
+}
+
+//! listen for click on resolve btn
+function quesResolveHandler(selectedQuestion) {
+  return function () {
+    deleteQuesFromLocalStorage(selectedQuestion);
+    removeQuesFromLeftDivQuesPanel(selectedQuestion);
+    hideResponseForm();
+    displayQuestionForm();
+  };
+}
+
+//! remove ques from local storage
+function deleteQuesFromLocalStorage(selectedQuestion) {
+  let allQues = getAllQuesFromLocalStorage();
+
+  let revisedQuestions = allQues.filter(function (ques) {
+    if (selectedQuestion.subject === ques.subject) {
+      return false;
+    }
+    return true;
+  });
+
+  localStorage.setItem("questions", JSON.stringify(revisedQuestions));
+}
+
+//! remove ques form left div ques panel
+function removeQuesFromLeftDivQuesPanel(selectedQuestion) {
+  let quesContainerNode = document.getElementById(selectedQuestion.subject);
+
+  leftDivQuesPanelNode.removeChild(quesContainerNode);
+}
+
+function addCommentHandler(question) {
+  return function () {
+    let response = {
+      name: commentorNameNode.value,
+      description: commentDescriptionNode.value,
+    };
+
+    // setupResponsePanel(question);
+
+    appendResponseToRightDivResponsePanelNode(response);
+    saveResponseInLocalStorage(question, response);
+  };
+}
+
+// //! add/clear response panel as needed
+// function setupResponsePanel(question) {
+//   console.log("setup caleld");
+//   let responses = question.responses;
+//   console.log(responses);
+//   if (responses.length == 0) {
+//     rightDivResponsePanelNode.innerHTML = "No Responses Submitted!";
+//   } else {
+//     rightDivResponsePanelNode.innerHTML = "";
+//   }
+// }
 
 //! append response in right div response panel
-function appendResponseToRightDivResponsePanel(response) {
+function appendResponseToRightDivResponsePanelNode(response) {
   const commentDivNode = document.createElement("div");
   const commentorNameNode = document.createElement("h2");
   const commentDescriptionNode = document.createElement("p");
@@ -171,7 +309,12 @@ function appendResponseToRightDivResponsePanel(response) {
   commentDivNode.appendChild(commentorNameNode);
   commentDivNode.appendChild(commentDescriptionNode);
 
-  rightDivResponsePanel.appendChild(commentDivNode);
+  rightDivResponsePanelNode.appendChild(commentDivNode);
+}
+
+//! display question form
+function displayQuestionForm() {
+  rightDivQuesFormNode.style.display = "block";
 }
 
 //! hide question form
@@ -182,6 +325,11 @@ function hideQuestionForm() {
 //! display resposne form
 function displayResponseForm() {
   rightDivResponseFormNode.style.display = "block";
+}
+
+//! hide response form
+function hideResponseForm() {
+  rightDivResponseFormNode.style.display = "none";
 }
 
 //! display question in right div ques panel node
@@ -199,6 +347,17 @@ function appendQuesToRightDivQuesPanel(question) {
   rightDivQuesPanelNode.appendChild(quesDivNode);
 }
 
-// update question
+//! save response in local storage
+function saveResponseInLocalStorage(selectedQuestion, response) {
+  //* get all qiestions first and push the updated qurstion and then store again in storage
+  let quesStoredInLocalStorage = getAllQuesFromLocalStorage();
 
-// save response
+  let updatedQues = quesStoredInLocalStorage.map(function (ques) {
+    if (ques.title === selectedQuestion.title) {
+      ques.responses.push(response);
+    }
+    return ques;
+  });
+
+  localStorage.setItem("questions", JSON.stringify(updatedQues));
+}
