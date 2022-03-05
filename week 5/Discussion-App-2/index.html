@@ -34,7 +34,11 @@
             <p>Enter a Subject and Question to get started</p>
             <form id="right-div-question-form-items">
               <div>
-                <input type="text" placeholder="Subject" />
+                <input
+                  type="text"
+                  placeholder="Subject"
+                  id="question-subject"
+                />
               </div>
               <div>
                 <textarea
@@ -45,7 +49,13 @@
                   placeholder="Ouestion"
                 ></textarea>
               </div>
-              <button class="btn">Submit</button>
+              <button
+                type="submit"
+                class="btn"
+                id="right-div-question-form-items-submit"
+              >
+                Submit
+              </button>
             </form>
           </div>
 
@@ -54,9 +64,11 @@
               <h2>Question</h2>
               <div id="right-div-question-panel"></div>
               <div id="right-div-question-buttons">
-                <button class="questionBtn btn">Upvote</button>
-                <button class="questionBtn btn">Downvote</button>
-                <button class="questionBtn btn">Resolve</button>
+                <button id="upvoteBtn" class="questionBtn btn">Upvote</button>
+                <button id="downvoteBtn" class="questionBtn btn">
+                  Downvote
+                </button>
+                <button id="resolveBtn" class="questionBtn btn">Resolve</button>
               </div>
             </div>
             <div id="response">
@@ -66,18 +78,24 @@
             <div id="add-response">
               <h2>Add Response</h2>
               <div>
-                <input type="text" placeholder="Enter Name" />
+                <input
+                  id="commentorName"
+                  type="text"
+                  placeholder="Enter Name"
+                />
               </div>
               <div>
                 <textarea
                   name="response-description"
-                  id="response-description"
+                  id="commentDescription"
                   cols="30"
                   rows="10"
                   placeholder="Enter Comment"
                 ></textarea>
               </div>
-              <button class="btn">Submit</button>
+              <button id="addCommentBtn" type="submit" class="btn">
+                Add Comment
+              </button>
             </div>
           </div>
         </div>

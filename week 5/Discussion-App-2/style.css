@@ -86,10 +86,8 @@ h2 {
   height: 100%;
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
   justify-content: center;
   margin: 0px auto;
-  /* display: none; */
 }
 
 #right-div-question-form > h2 {
@@ -142,9 +140,10 @@ h2 {
 
 #response {
   flex: 25%;
-  display: block;
+  /* display: none; */
 }
 
 #add-response {
   flex: 50%;
+  display: none;
 }
