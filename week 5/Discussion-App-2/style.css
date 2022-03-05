@@ -140,10 +140,8 @@ h2 {
 
 #response {
   flex: 25%;
-  /* display: none; */
 }
 
 #add-response {
   flex: 50%;
-  display: none;
 }
