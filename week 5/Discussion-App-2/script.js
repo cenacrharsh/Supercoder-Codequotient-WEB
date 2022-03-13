@@ -110,6 +110,7 @@ function questionSubmitHandler(event) {
 
   appendQuesToLeftDivQuesPanel(question);
   saveQuesToLocalStorage(question);
+  clearRightDivQuesForm();
 }
 
 //! save question to local storage
@@ -165,9 +166,19 @@ function appendQuesToLeftDivQuesPanel(question) {
   quesDivNode.onclick = questionClickHandler(question);
 }
 
-// clear question form
+//! clear question form
+function clearRightDivQuesForm() {
+  questionSubjectNode.value = "";
+  questionDescriptionNode.value = "";
+}
 
-// listen for click on question and display in right pane
+//! clear response form
+function clearResponseForm() {
+  commentorNameNode.value = "";
+  commentDescriptionNode.value = "";
+}
+
+//! listen for click on question and display in right panel
 function questionClickHandler(question) {
   //* using closure so we can access question variable
   return function () {
@@ -185,7 +196,6 @@ function questionClickHandler(question) {
     appendQuesToRightDivQuesPanel(question);
 
     //* show all previous responses
-    // setupResponsePanel(question);
 
     let responses = question.responses;
     responses.forEach(function (response) {
@@ -276,6 +286,7 @@ function removeQuesFromLeftDivQuesPanel(selectedQuestion) {
   leftDivQuesPanelNode.removeChild(quesContainerNode);
 }
 
+//! handler for add comment button
 function addCommentHandler(question) {
   return function () {
     let response = {
@@ -283,24 +294,12 @@ function addCommentHandler(question) {
       description: commentDescriptionNode.value,
     };
 
-    // setupResponsePanel(question);
-
     appendResponseToRightDivResponsePanelNode(response);
     saveResponseInLocalStorage(question, response);
+
+    clearResponseForm();
   };
 }
-
-// //! add/clear response panel as needed
-// function setupResponsePanel(question) {
-//   console.log("setup caleld");
-//   let responses = question.responses;
-//   console.log(responses);
-//   if (responses.length == 0) {
-//     rightDivResponsePanelNode.innerHTML = "No Responses Submitted!";
-//   } else {
-//     rightDivResponsePanelNode.innerHTML = "";
-//   }
-// }
 
 //! append response in right div response panel
 function appendResponseToRightDivResponsePanelNode(response) {
