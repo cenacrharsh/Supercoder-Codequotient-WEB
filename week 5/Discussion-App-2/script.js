@@ -105,6 +105,7 @@ function questionSubmitHandler(event) {
     responses: [],
     upvotes: 0,
     downvotes: 0,
+    createdAt: Date.now() /* for time in ms */,
   };
 
   appendQuesToLeftDivQuesPanel(question);
@@ -141,6 +142,7 @@ function appendQuesToLeftDivQuesPanel(question) {
   const quesDescriptionNode = document.createElement("p");
   const quesUpvotesNode = document.createElement("p");
   const quesDownvotesNode = document.createElement("p");
+  const createdAtNode = document.createElement("p");
 
   quesDivNode.setAttribute("id", question.subject);
 
@@ -148,11 +150,14 @@ function appendQuesToLeftDivQuesPanel(question) {
   quesDescriptionNode.innerHTML = question.description;
   quesUpvotesNode.innerHTML = "Upvotes: " + question.upvotes;
   quesDownvotesNode.innerHTML = "Downvotes: " + question.downvotes;
+  createdAtNode.innerHTML =
+    "Created At: " + new Date(question.createdAt).toLocaleString();
 
   quesDivNode.appendChild(quesSubjectNode);
   quesDivNode.appendChild(quesDescriptionNode);
   quesDivNode.appendChild(quesUpvotesNode);
   quesDivNode.appendChild(quesDownvotesNode);
+  quesDivNode.appendChild(createdAtNode);
 
   leftDivQuesPanelNode.appendChild(quesDivNode);
 
