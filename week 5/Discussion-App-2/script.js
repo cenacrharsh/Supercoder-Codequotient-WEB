@@ -155,7 +155,9 @@ function appendQuesToLeftDivQuesPanel(question) {
   createdAtNode.innerHTML =
     "Created At: " + new Date(question.createdAt).toLocaleString();
   timestampNode.innerHTML =
-    "Created: " + timePassedSinceCreation(question.createdAt) + " ago ";
+    "Created: " +
+    updateAndConvertTime(timestampNode)(question.createdAt) +
+    " ago ";
 
   quesDivNode.appendChild(quesSubjectNode);
   quesDivNode.appendChild(quesDescriptionNode);
@@ -168,6 +170,17 @@ function appendQuesToLeftDivQuesPanel(question) {
 
   //* adding click event listener on quesDivNode
   quesDivNode.onclick = questionClickHandler(question);
+}
+
+//! setInterval & Update time
+function updateAndConvertTime(element) {
+  return function (time) {
+    setInterval(function () {
+      element.innerHTML = "Created: " + timePassedSinceCreation(time) + " ago ";
+    }, 1000);
+
+    return timePassedSinceCreation(time);
+  };
 }
 
 //! calculate time passed since creation of question
