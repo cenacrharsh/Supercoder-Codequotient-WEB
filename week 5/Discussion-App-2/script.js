@@ -42,10 +42,9 @@ searchQuesNode.addEventListener("keyup", function (event) {
 //! filter result according to search text
 function filterQues(searchText) {
   let allQues = getAllQuesFromLocalStorage();
+  clearLeftDivQuesPanel();
 
   if (searchText) {
-    clearLeftDivQuesPanel();
-
     let filteredQues = allQues.filter(function (ques) {
       if (ques.subject.includes(searchText)) {
         return true;
@@ -60,8 +59,6 @@ function filterQues(searchText) {
       printNoMatchFound();
     }
   } else {
-    clearLeftDivQuesPanel();
-
     allQues.forEach(function (ques) {
       appendQuesToLeftDivQuesPanel(ques);
     });
@@ -106,6 +103,7 @@ function questionSubmitHandler(event) {
     upvotes: 0,
     downvotes: 0,
     createdAt: Date.now() /* for time in ms */,
+    isFavourite: false,
   };
 
   appendQuesToLeftDivQuesPanel(question);
@@ -145,6 +143,7 @@ function appendQuesToLeftDivQuesPanel(question) {
   const quesDownvotesNode = document.createElement("p");
   const createdAtNode = document.createElement("p");
   const timestampNode = document.createElement("p");
+  const addToFavouriteNode = document.createElement("button");
 
   quesDivNode.setAttribute("id", question.subject);
 
@@ -158,6 +157,11 @@ function appendQuesToLeftDivQuesPanel(question) {
     "Created: " +
     updateAndConvertTime(timestampNode)(question.createdAt) +
     " ago ";
+  if (question.isFavourite) {
+    addToFavouriteNode.innerHTML = "Remove From Favourites";
+  } else {
+    addToFavouriteNode.innerHTML = "Add To Favourites";
+  }
 
   quesDivNode.appendChild(quesSubjectNode);
   quesDivNode.appendChild(quesDescriptionNode);
@@ -165,11 +169,27 @@ function appendQuesToLeftDivQuesPanel(question) {
   quesDivNode.appendChild(quesDownvotesNode);
   quesDivNode.appendChild(createdAtNode);
   quesDivNode.appendChild(timestampNode);
+  quesDivNode.appendChild(addToFavouriteNode);
 
   leftDivQuesPanelNode.appendChild(quesDivNode);
 
   //* adding click event listener on quesDivNode
   quesDivNode.onclick = questionClickHandler(question);
+
+  //* adding click event listener on addToFavouriteNode
+  addToFavouriteNode.addEventListener(
+    "click",
+    toggleFavouriteQuesHandler(question)
+  );
+}
+
+//! toggleFavouriteQuesHandler
+function toggleFavouriteQuesHandler(question) {
+  return function () {
+    question.isFavourite = !question.isFavourite;
+    updateQuesInLocalStorage(question);
+    updateQuestionUI(question);
+  };
 }
 
 //! setInterval & Update time
@@ -284,6 +304,11 @@ function updateQuestionUI(question) {
   quesContainerNode.childNodes[2].innerHTML = "Upvotes: " + question.upvotes;
   quesContainerNode.childNodes[3].innerHTML =
     "Downvotes: " + question.downvotes;
+  if (question.isFavourite) {
+    quesContainerNode.childNodes[6].innerHTML = "Remove From Favourites";
+  } else {
+    quesContainerNode.childNodes[6].innerHTML = "Add To Favourites";
+  }
 }
 
 //! listen for click on resolve btn
