@@ -82,6 +82,16 @@ function onLoad() {
   //* get all ques from local storage
   let quesStoredInLocalStorage = getAllQuesFromLocalStorage();
 
+  quesStoredInLocalStorage = quesStoredInLocalStorage.sort(function (
+    currentQues
+  ) {
+    if (currentQues.isFavourite) {
+      return -1;
+    }
+
+    return 1;
+  });
+
   //* add all ques to left div ques panel
   quesStoredInLocalStorage.forEach(function (question) {
     appendQuesToLeftDivQuesPanel(question);

@@ -9,7 +9,6 @@
 body {
   font-family: "Poppins", sans-serif;
   background-color: blueviolet;
-  overflow: hidden;
 }
 
 h1,
@@ -73,6 +72,7 @@ h2 {
 
 #left-div-question-panel {
   background-color: lightskyblue;
+  overflow: auto;
 }
 
 #right-div {
