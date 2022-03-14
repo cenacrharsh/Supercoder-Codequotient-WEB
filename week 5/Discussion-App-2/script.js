@@ -144,6 +144,7 @@ function appendQuesToLeftDivQuesPanel(question) {
   const quesUpvotesNode = document.createElement("p");
   const quesDownvotesNode = document.createElement("p");
   const createdAtNode = document.createElement("p");
+  const timestampNode = document.createElement("p");
 
   quesDivNode.setAttribute("id", question.subject);
 
@@ -153,17 +154,34 @@ function appendQuesToLeftDivQuesPanel(question) {
   quesDownvotesNode.innerHTML = "Downvotes: " + question.downvotes;
   createdAtNode.innerHTML =
     "Created At: " + new Date(question.createdAt).toLocaleString();
+  timestampNode.innerHTML =
+    "Created: " + timePassedSinceCreation(question.createdAt) + " ago ";
 
   quesDivNode.appendChild(quesSubjectNode);
   quesDivNode.appendChild(quesDescriptionNode);
   quesDivNode.appendChild(quesUpvotesNode);
   quesDivNode.appendChild(quesDownvotesNode);
   quesDivNode.appendChild(createdAtNode);
+  quesDivNode.appendChild(timestampNode);
 
   leftDivQuesPanelNode.appendChild(quesDivNode);
 
   //* adding click event listener on quesDivNode
   quesDivNode.onclick = questionClickHandler(question);
+}
+
+//! calculate time passed since creation of question
+function timePassedSinceCreation(creationTime) {
+  let currentTime = Date.now();
+  let timePassed = currentTime - new Date(creationTime).getTime();
+
+  let secPassed = parseInt(timePassed / 1000);
+  let minPassed = parseInt(secPassed / 60);
+  let hourPassed = parseInt(minPassed / 60);
+
+  return (
+    hourPassed + " hours " + minPassed + " minutes " + secPassed + " seconds"
+  );
 }
 
 //! clear question form
