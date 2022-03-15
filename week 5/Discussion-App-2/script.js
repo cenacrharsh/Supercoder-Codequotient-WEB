@@ -26,6 +26,28 @@ const rightDivResponsePanelNode = document.getElementById(
 const newQuesFormBtnNode = document.getElementById("newQuesFormBtn");
 const searchQuesNode = document.getElementById("searchQues");
 
+//! display all exixting questions stored in local storage
+function onLoad() {
+  //* get all ques from local storage
+  getAllQuesFromServer(function (allQuesStoredInServer) {
+    //* sort all ques aq to favourite
+    allQuesStoredInServer = allQuesStoredInServer.sort(function (currentQues) {
+      if (currentQues.isFavourite) {
+        return -1;
+      }
+
+      return 1;
+    });
+
+    //* add all ques to left div ques panel
+    allQuesStoredInServer.forEach(function (question) {
+      appendQuesToLeftDivQuesPanel(question);
+    });
+  });
+}
+
+onLoad();
+
 //! listen for click on new ques form btn
 newQuesFormBtnNode.addEventListener("click", newQuesFormHandler);
 
@@ -65,40 +87,6 @@ function filterQues(searchText) {
     }
   });
 }
-
-//! clear all questions in left div ques panel
-function clearLeftDivQuesPanel() {
-  leftDivQuesPanelNode.innerHTML = "";
-}
-
-//! print No match found if no ques matches search text
-function printNoMatchFound() {
-  let msgNode = document.createElement("h2");
-  msgNode.innerHTML = "No Matches Found!";
-  leftDivQuesPanelNode.appendChild(msgNode);
-}
-
-//! display all exixting questions stored in local storage
-function onLoad() {
-  //* get all ques from local storage
-  getAllQuesFromServer(function (allQuesStoredInServer) {
-    //* sort all ques aq to favourite
-    allQuesStoredInServer = allQuesStoredInServer.sort(function (currentQues) {
-      if (currentQues.isFavourite) {
-        return -1;
-      }
-
-      return 1;
-    });
-
-    //* add all ques to left div ques panel
-    allQuesStoredInServer.forEach(function (question) {
-      appendQuesToLeftDivQuesPanel(question);
-    });
-  });
-}
-
-onLoad();
 
 //! listen for click event on question submit button to create a question
 questionSubmitBtnNode.addEventListener("click", questionSubmitHandler);
@@ -173,6 +161,55 @@ function appendQuesToLeftDivQuesPanel(question) {
   );
 }
 
+//! display question in right div ques panel node
+function appendQuesToRightDivQuesPanel(question) {
+  const quesDivNode = document.createElement("div");
+  const quesSubjectNode = document.createElement("h2");
+  const quesDescriptionNode = document.createElement("p");
+
+  quesSubjectNode.innerHTML = question.subject;
+  quesDescriptionNode.innerHTML = question.description;
+
+  quesDivNode.appendChild(quesSubjectNode);
+  quesDivNode.appendChild(quesDescriptionNode);
+
+  rightDivQuesPanelNode.appendChild(quesDivNode);
+}
+
+//! listen for click on question and display in right panel
+function questionClickHandler(question) {
+  //* using closure so we can access question variable
+  return function () {
+    //* hide right div question form
+    hideQuestionForm();
+
+    //* clear previous question details & response details
+    rightDivQuesPanelNode.innerHTML = "";
+    rightDivResponsePanelNode.innerHTML = "";
+
+    //* display resposne form
+    displayResponseForm();
+
+    //* display question details in right div question panel
+    appendQuesToRightDivQuesPanel(question);
+
+    //* show all previous responses
+
+    let responses = question.responses;
+    responses.forEach(function (response) {
+      appendResponseToRightDivResponsePanelNode(response);
+    });
+
+    //* add click event listener on response, upvote & downvote button
+    resolveBtnNode.onclick = quesResolveHandler(question);
+    upvoteBtnNode.onclick = quesUpvoteHandler(question);
+    downvoteBtnNode.onclick = quesDownvoteHandler(question);
+
+    //* add click event listener on add comment button
+    addCommentBtnNode.onclick = addCommentHandler(question);
+  };
+}
+
 //! toggleFavouriteQuesHandler
 function toggleFavouriteQuesHandler(question) {
   return function () {
@@ -219,38 +256,16 @@ function clearResponseForm() {
   commentDescriptionNode.value = "";
 }
 
-//! listen for click on question and display in right panel
-function questionClickHandler(question) {
-  //* using closure so we can access question variable
-  return function () {
-    //* hide right div question form
-    hideQuestionForm();
+//! clear all questions in left div ques panel
+function clearLeftDivQuesPanel() {
+  leftDivQuesPanelNode.innerHTML = "";
+}
 
-    //* clear previous question details & response details
-    rightDivQuesPanelNode.innerHTML = "";
-    rightDivResponsePanelNode.innerHTML = "";
-
-    //* display resposne form
-    displayResponseForm();
-
-    //* display question details in right div question panel
-    appendQuesToRightDivQuesPanel(question);
-
-    //* show all previous responses
-
-    let responses = question.responses;
-    responses.forEach(function (response) {
-      appendResponseToRightDivResponsePanelNode(response);
-    });
-
-    //* add click event listener on response, upvote & downvote button
-    resolveBtnNode.onclick = quesResolveHandler(question);
-    upvoteBtnNode.onclick = quesUpvoteHandler(question);
-    downvoteBtnNode.onclick = quesDownvoteHandler(question);
-
-    //* add click event listener on add comment button
-    addCommentBtnNode.onclick = addCommentHandler(question);
-  };
+//! print No match found if no ques matches search text
+function printNoMatchFound() {
+  let msgNode = document.createElement("h2");
+  msgNode.innerHTML = "No Matches Found!";
+  leftDivQuesPanelNode.appendChild(msgNode);
 }
 
 //! upvote ques
@@ -353,21 +368,6 @@ function displayResponseForm() {
 //! hide response form
 function hideResponseForm() {
   rightDivResponseFormNode.style.display = "none";
-}
-
-//! display question in right div ques panel node
-function appendQuesToRightDivQuesPanel(question) {
-  const quesDivNode = document.createElement("div");
-  const quesSubjectNode = document.createElement("h2");
-  const quesDescriptionNode = document.createElement("p");
-
-  quesSubjectNode.innerHTML = question.subject;
-  quesDescriptionNode.innerHTML = question.description;
-
-  quesDivNode.appendChild(quesSubjectNode);
-  quesDivNode.appendChild(quesDescriptionNode);
-
-  rightDivQuesPanelNode.appendChild(quesDivNode);
 }
 
 //! Function to Generate Unique ID
