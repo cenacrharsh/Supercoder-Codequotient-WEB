@@ -82,6 +82,7 @@ function onLoad() {
   //* get all ques from local storage
   let quesStoredInLocalStorage = getAllQuesFromLocalStorage();
 
+  //* sort all ques aq to favourite
   quesStoredInLocalStorage = quesStoredInLocalStorage.sort(function (
     currentQues
   ) {
