@@ -117,15 +117,17 @@ function questionSubmitHandler(event) {
 function appendQuesToLeftDivQuesPanel(question) {
   const quesDivNode = document.createElement("div");
   quesDivNode.setAttribute("id", question.id);
+  quesDivNode.setAttribute("class", "dynamicNode");
 
   const quesHeadingNode = document.createElement("div");
+  quesHeadingNode.setAttribute("id", "quesHeadingNode");
 
   const quesSubjectNode = document.createElement("h2");
   quesSubjectNode.innerHTML = question.subject;
   quesHeadingNode.appendChild(quesSubjectNode);
 
-  const favIconNode = document.createElement("span");
-  favIconNode.innerHTML = "fav";
+  const favIconNode = document.createElement("i");
+  favIconNode.setAttribute("class", "fas fa-star fa-2x icon");
   quesHeadingNode.appendChild(favIconNode);
 
   quesDivNode.appendChild(quesHeadingNode);
@@ -174,13 +176,14 @@ function appendQuesToLeftDivQuesPanel(question) {
 //! display question in right div ques panel node
 function appendQuesToRightDivQuesPanel(question) {
   const quesDivNode = document.createElement("div");
+  quesDivNode.setAttribute("class", "dynamicNode");
+
   const quesSubjectNode = document.createElement("h2");
-  const quesDescriptionNode = document.createElement("p");
-
   quesSubjectNode.innerHTML = question.subject;
-  quesDescriptionNode.innerHTML = question.description;
-
   quesDivNode.appendChild(quesSubjectNode);
+
+  const quesDescriptionNode = document.createElement("p");
+  quesDescriptionNode.innerHTML = question.description;
   quesDivNode.appendChild(quesDescriptionNode);
 
   rightDivQuesPanelNode.appendChild(quesDivNode);
@@ -212,15 +215,17 @@ function addCommentHandler(question) {
 function appendResponseToRightDivResponsePanelNode(response, question) {
   const commentDivNode = document.createElement("div");
   commentDivNode.setAttribute("id", response.id);
+  commentDivNode.setAttribute("class", "dynamicNode");
 
   const commentHeadingNode = document.createElement("div");
+  commentHeadingNode.setAttribute("id", "commentHeadingNode");
 
   const commentorNameNode = document.createElement("h2");
   commentorNameNode.innerHTML = response.name;
   commentHeadingNode.appendChild(commentorNameNode);
 
-  const favIconNode = document.createElement("span");
-  favIconNode.innerHTML = "fav";
+  const favIconNode = document.createElement("i");
+  favIconNode.setAttribute("class", "fas fa-star fa-lg icon");
   commentHeadingNode.appendChild(favIconNode);
 
   commentDivNode.appendChild(commentHeadingNode);
@@ -250,25 +255,26 @@ function appendResponseToRightDivResponsePanelNode(response, question) {
   commentDivNode.appendChild(timestampNode);
 
   const commentUtilityBtnNode = document.createElement("div");
+  commentUtilityBtnNode.setAttribute("id", "commentUtilityBtnNode");
 
   const commentUpvoteBtn = document.createElement("button");
-  commentUpvoteBtn.innerHTML = "⬆️";
+  commentUpvoteBtn.innerHTML = "⬆️ Upvote";
   commentUtilityBtnNode.appendChild(commentUpvoteBtn);
 
   const commentDownvoteBtn = document.createElement("button");
-  commentDownvoteBtn.innerHTML = "⬇️";
+  commentDownvoteBtn.innerHTML = "⬇️ Downvote";
   commentUtilityBtnNode.appendChild(commentDownvoteBtn);
 
   const addToFavouriteBtn = document.createElement("button");
   if (response.isFavourite) {
-    addToFavouriteBtn.innerHTML = "➖";
+    addToFavouriteBtn.innerHTML = "➖ Remove From Favourites";
   } else {
-    addToFavouriteBtn.innerHTML = "➕";
+    addToFavouriteBtn.innerHTML = "➕ Add To Favourites";
   }
   commentUtilityBtnNode.appendChild(addToFavouriteBtn);
 
   const commentDeleteBtn = document.createElement("button");
-  commentDeleteBtn.innerHTML = "❌";
+  commentDeleteBtn.innerHTML = "❌ Delete";
   commentUtilityBtnNode.appendChild(commentDeleteBtn);
 
   commentDivNode.appendChild(commentUtilityBtnNode);
@@ -292,27 +298,46 @@ function commentUpvoteHandler(response, question) {
 }
 
 //! downvote resposne
-function commentDownvoteHandler(response) {}
+function commentDownvoteHandler(response, question) {
+  return function () {
+    response.downvotes++;
+    updateQuesInServer(question);
+    updateResponseUI(response);
+  };
+}
 
 //! toggle favourite btn on response
-function addToFavouriteHandler(response) {}
+function addToFavouriteHandler(response, question) {
+  return function () {
+    response.isFavourite = !response.isFavourite;
+    updateQuesInServer(question);
+    updateResponseUI(response);
+  };
+}
 
 //! delete response
-function commentDeleteHandler(response) {}
+function commentDeleteHandler(response, question) {
+  return function () {
+    deleteResFromServer(response, question);
+    removeResFromRightDivResPanel(response);
+  };
+}
 
 //! update selected response UI
 function updateResponseUI(response) {
   //* get response container from DOM
   let resContainerNode = document.getElementById(response.id);
   console.log(resContainerNode);
-  console.log(resContainerNode.childNodes);
+  console.log(resContainerNode.childNodes[6].childNodes[2]);
 
   resContainerNode.childNodes[2].innerHTML = "Upvotes: " + response.upvotes;
   resContainerNode.childNodes[3].innerHTML = "Downvotes: " + response.downvotes;
   if (response.isFavourite) {
-    resContainerNode.childNodes[6][2].innerHTML = "➖";
+    resContainerNode.childNodes[6].childNodes[2].innerHTML =
+      "➖ Remove From Favourites";
   } else {
-    resContainerNode.childNodes[6][2].innerHTML = "➕";
+    resContainerNode.childNodes[6].childNodes[2].innerHTML =
+      "➕ Add To Favourites";
   }
 }
 
@@ -453,9 +478,16 @@ function printNoMatchFound() {
 
 //! remove ques form left div ques panel
 function removeQuesFromLeftDivQuesPanel(selectedQuestion) {
-  let quesContainerNode = document.getElementById(selectedQuestion.subject);
+  let quesContainerNode = document.getElementById(selectedQuestion.id);
 
   leftDivQuesPanelNode.removeChild(quesContainerNode);
+}
+
+//! remove res from right div res panel
+function removeResFromRightDivResPanel(selectedResponse) {
+  let resContainerNode = document.getElementById(selectedResponse.id);
+
+  rightDivResponsePanelNode.removeChild(resContainerNode);
 }
 
 //! display question form
@@ -602,4 +634,18 @@ function deleteQuesFromServer(selectedQuestion) {
 
     saveAllQuesInServer(revisedQuestions);
   });
+}
+
+//! remove res from server
+function deleteResFromServer(response, selectedQuestion) {
+  console.log("before", selectedQuestion);
+  let revisedResponses = selectedQuestion.responses.filter(function (res) {
+    if (response.id === res.id) {
+      return false;
+    }
+    return true;
+  });
+
+  selectedQuestion.responses = revisedResponses;
+  updateQuesInServer(selectedQuestion);
 }
