@@ -41,28 +41,29 @@ searchQuesNode.addEventListener("keyup", function (event) {
 
 //! filter result according to search text
 function filterQues(searchText) {
-  let allQues = getAllQuesFromLocalStorage();
-  clearLeftDivQuesPanel();
+  getAllQuesFromServer(function (allQuesStoredInServer) {
+    clearLeftDivQuesPanel();
 
-  if (searchText) {
-    let filteredQues = allQues.filter(function (ques) {
-      if (ques.subject.includes(searchText)) {
-        return true;
+    if (searchText) {
+      let filteredQues = allQuesStoredInServer.filter(function (ques) {
+        if (ques.subject.includes(searchText)) {
+          return true;
+        }
+      });
+
+      if (filteredQues.length) {
+        filteredQues.forEach(function (ques) {
+          appendQuesToLeftDivQuesPanel(ques);
+        });
+      } else {
+        printNoMatchFound();
       }
-    });
-
-    if (filteredQues.length) {
-      filteredQues.forEach(function (ques) {
+    } else {
+      allQuesStoredInServer.forEach(function (ques) {
         appendQuesToLeftDivQuesPanel(ques);
       });
-    } else {
-      printNoMatchFound();
     }
-  } else {
-    allQues.forEach(function (ques) {
-      appendQuesToLeftDivQuesPanel(ques);
-    });
-  }
+  });
 }
 
 //! clear all questions in left div ques panel
@@ -80,22 +81,20 @@ function printNoMatchFound() {
 //! display all exixting questions stored in local storage
 function onLoad() {
   //* get all ques from local storage
-  let quesStoredInLocalStorage = getAllQuesFromLocalStorage();
+  getAllQuesFromServer(function (allQuesStoredInServer) {
+    //* sort all ques aq to favourite
+    allQuesStoredInServer = allQuesStoredInServer.sort(function (currentQues) {
+      if (currentQues.isFavourite) {
+        return -1;
+      }
 
-  //* sort all ques aq to favourite
-  quesStoredInLocalStorage = quesStoredInLocalStorage.sort(function (
-    currentQues
-  ) {
-    if (currentQues.isFavourite) {
-      return -1;
-    }
+      return 1;
+    });
 
-    return 1;
-  });
-
-  //* add all ques to left div ques panel
-  quesStoredInLocalStorage.forEach(function (question) {
-    appendQuesToLeftDivQuesPanel(question);
+    //* add all ques to left div ques panel
+    allQuesStoredInServer.forEach(function (question) {
+      appendQuesToLeftDivQuesPanel(question);
+    });
   });
 }
 
@@ -117,32 +116,12 @@ function questionSubmitHandler(event) {
     isFavourite: false,
   };
 
-  appendQuesToLeftDivQuesPanel(question);
-  saveQuesToLocalStorage(question);
-  clearRightDivQuesForm();
-}
-
-//! save question to local storage
-function saveQuesToLocalStorage(question) {
-  //* get all qiestions first and push the new qurstion and then store again in storage
-  let quesStoredInLocalStorage = getAllQuesFromLocalStorage();
-
-  quesStoredInLocalStorage.push(question);
-
-  localStorage.setItem("questions", JSON.stringify(quesStoredInLocalStorage));
-}
-
-//! get all questions from local storage
-function getAllQuesFromLocalStorage() {
-  let allQues = localStorage.getItem("questions");
-
-  if (allQues) {
-    allQues = JSON.parse(allQues);
-  } else {
-    allQues = [];
+  if (question.subject !== "" && question.description !== "") {
+    addNewQuesInServer(question, function () {
+      appendQuesToLeftDivQuesPanel(question);
+      clearRightDivQuesForm();
+    });
   }
-
-  return allQues;
 }
 
 //! append question to left div question panel
@@ -198,7 +177,7 @@ function appendQuesToLeftDivQuesPanel(question) {
 function toggleFavouriteQuesHandler(question) {
   return function () {
     question.isFavourite = !question.isFavourite;
-    updateQuesInLocalStorage(question);
+    updateQuesInServer(question);
     updateQuestionUI(question);
   };
 }
@@ -278,7 +257,7 @@ function questionClickHandler(question) {
 function quesUpvoteHandler(question) {
   return function () {
     question.upvotes++;
-    updateQuesInLocalStorage(question);
+    updateQuesInServer(question);
     updateQuestionUI(question);
   };
 }
@@ -287,24 +266,9 @@ function quesUpvoteHandler(question) {
 function quesDownvoteHandler(question) {
   return function () {
     question.downvotes++;
-    updateQuesInLocalStorage(question);
+    updateQuesInServer(question);
     updateQuestionUI(question);
   };
-}
-
-//! update ques in local storage
-function updateQuesInLocalStorage(updatedQuestion) {
-  let allQues = getAllQuesFromLocalStorage();
-
-  let revisedQuestions = allQues.map(function (ques) {
-    if (updatedQuestion.subject === ques.subject) {
-      return updatedQuestion;
-    }
-
-    return ques;
-  });
-
-  localStorage.setItem("questions", JSON.stringify(revisedQuestions));
 }
 
 //! update selected question UI after upvote/downvote
@@ -325,25 +289,11 @@ function updateQuestionUI(question) {
 //! listen for click on resolve btn
 function quesResolveHandler(selectedQuestion) {
   return function () {
-    deleteQuesFromLocalStorage(selectedQuestion);
+    deleteQuesFromServer(selectedQuestion);
     removeQuesFromLeftDivQuesPanel(selectedQuestion);
     hideResponseForm();
     displayQuestionForm();
   };
-}
-
-//! remove ques from local storage
-function deleteQuesFromLocalStorage(selectedQuestion) {
-  let allQues = getAllQuesFromLocalStorage();
-
-  let revisedQuestions = allQues.filter(function (ques) {
-    if (selectedQuestion.subject === ques.subject) {
-      return false;
-    }
-    return true;
-  });
-
-  localStorage.setItem("questions", JSON.stringify(revisedQuestions));
 }
 
 //! remove ques form left div ques panel
@@ -361,10 +311,12 @@ function addCommentHandler(question) {
       description: commentDescriptionNode.value,
     };
 
-    appendResponseToRightDivResponsePanelNode(response);
-    saveResponseInLocalStorage(question, response);
-
-    clearResponseForm();
+    if (response.name !== "" && response.description !== "") {
+      saveResponseInServer(question, response, function () {
+        appendResponseToRightDivResponsePanelNode(response);
+        clearResponseForm();
+      });
+    }
   };
 }
 
@@ -418,17 +370,175 @@ function appendQuesToRightDivQuesPanel(question) {
   rightDivQuesPanelNode.appendChild(quesDivNode);
 }
 
-//! save response in local storage
-function saveResponseInLocalStorage(selectedQuestion, response) {
+//# CRUD in Server
+
+//! get all ques from server
+function getAllQuesFromServer(onResponseFromServer) {
+  let request = new XMLHttpRequest();
+  request.open("GET", "https://storage.codequotient.com/data/get");
+  request.send();
+  request.addEventListener("load", function (event) {
+    let getRequestResponseData = JSON.parse(event.target.responseText);
+    let allQuesStoredInServer = JSON.parse(getRequestResponseData.data);
+    console.log("All Ques Retrieved from Server Successfully");
+    onResponseFromServer(allQuesStoredInServer);
+  });
+}
+
+//! add new ques in server
+function addNewQuesInServer(question, onQuesSaveInServer) {
+  //* get all qiestions first and push the new qurstion and then store again in server the updated array of questions
+  getAllQuesFromServer(function (allQuesStoredInServer) {
+    allQuesStoredInServer.push(question);
+
+    let postObj = {
+      data: JSON.stringify(allQuesStoredInServer),
+    };
+
+    let postData = JSON.stringify(postObj);
+
+    let request = new XMLHttpRequest();
+    request.open("POST", "https://storage.codequotient.com/data/save");
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    request.send(postData);
+    request.addEventListener("load", function (event) {
+      console.log(
+        "New Ques Added in Server Successfully: ",
+        JSON.parse(event.target.responseText)
+      );
+      onQuesSaveInServer();
+    });
+  });
+}
+
+//! save all ques in server
+function saveAllQuesInServer(allQues) {
+  let postObj = {
+    data: JSON.stringify(allQues),
+  };
+
+  let postData = JSON.stringify(postObj);
+
+  let request = new XMLHttpRequest();
+  request.open("POST", "https://storage.codequotient.com/data/save");
+  request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  request.send(postData);
+  request.addEventListener("load", function (event) {
+    console.log(
+      "Updated Set of Ques Saved in Server Successfully: ",
+      JSON.parse(event.target.responseText)
+    );
+  });
+}
+
+//! save response in server
+function saveResponseInServer(
+  selectedQuestion,
+  response,
+  onResponseSaveInServer
+) {
   //* get all qiestions first and push the updated qurstion and then store again in storage
+  console.log("sel ques", selectedQuestion);
+  getAllQuesFromServer(function (allQuesStoredInServer) {
+    console.log("all ques prev", allQuesStoredInServer);
+
+    let updatedQues = allQuesStoredInServer.map(function (ques) {
+      if (ques.subject === selectedQuestion.subject) {
+        ques.responses.push(response);
+      }
+      return ques;
+    });
+
+    console.log("all ques now", updatedQues);
+
+    saveAllQuesInServer(updatedQues);
+    onResponseSaveInServer();
+  });
+}
+
+//! update ques in server
+function updateQuesInServer(updatedQuestion) {
+  getAllQuesFromServer(function (allQuesStoredInServer) {
+    let revisedQuestions = allQuesStoredInServer.map(function (ques) {
+      if (updatedQuestion.subject === ques.subject) {
+        return updatedQuestion;
+      }
+
+      return ques;
+    });
+
+    saveAllQuesInServer(revisedQuestions);
+  });
+}
+
+//! remove ques from server
+function deleteQuesFromServer(selectedQuestion) {
+  getAllQuesFromServer(function (allQuesStoredInServer) {
+    let revisedQuestions = allQuesStoredInServer.filter(function (ques) {
+      if (selectedQuestion.subject === ques.subject) {
+        return false;
+      }
+      return true;
+    });
+
+    saveAllQuesInServer(revisedQuestions);
+  });
+}
+
+/*
+
+# CRUD in Local Storage
+
+//! get all questions from local storage
+function getAllQuesFromLocalStorage() {
+  let allQues = localStorage.getItem("questions");
+
+  if (allQues) {
+    allQues = JSON.parse(allQues);
+  } else {
+    allQues = [];
+  }
+
+  return allQues;
+}
+
+//! save question to local storage
+function saveQuesToLocalStorage(question) {
+  //* get all qiestions first and push the new qurstion and then store again in storage
   let quesStoredInLocalStorage = getAllQuesFromLocalStorage();
 
-  let updatedQues = quesStoredInLocalStorage.map(function (ques) {
-    if (ques.title === selectedQuestion.title) {
-      ques.responses.push(response);
+  quesStoredInLocalStorage.push(question);
+
+  localStorage.setItem("questions", JSON.stringify(quesStoredInLocalStorage));
+}
+
+//! update ques in local storage
+function updateQuesInLocalStorage(updatedQuestion) {
+  let allQues = getAllQuesFromLocalStorage();
+
+  let revisedQuestions = allQues.map(function (ques) {
+    if (updatedQuestion.subject === ques.subject) {
+      return updatedQuestion;
     }
+
     return ques;
   });
 
-  localStorage.setItem("questions", JSON.stringify(updatedQues));
+  localStorage.setItem("questions", JSON.stringify(revisedQuestions));
 }
+
+//! remove ques from local storage
+function deleteQuesFromLocalStorage(selectedQuestion) {
+  let allQues = getAllQuesFromLocalStorage();
+
+  let revisedQuestions = allQues.filter(function (ques) {
+    if (selectedQuestion.subject === ques.subject) {
+      return false;
+    }
+    return true;
+  });
+
+  localStorage.setItem("questions", JSON.stringify(revisedQuestions));
+}
+
+*/
