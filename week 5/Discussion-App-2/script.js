@@ -370,6 +370,11 @@ function appendQuesToRightDivQuesPanel(question) {
   rightDivQuesPanelNode.appendChild(quesDivNode);
 }
 
+//! Function to Generate Unique ID
+function generateUniqueId() {
+  return JSON.stringify(Math.floor(Math.random() * Date.now()));
+}
+
 //# CRUD in Server
 
 //! get all ques from server
