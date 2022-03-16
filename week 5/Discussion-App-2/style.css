@@ -1,14 +1,10 @@
-*,
-*:before,
-*:after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
   font-family: "Poppins", sans-serif;
-  background-color: blueviolet;
+  height: 100vh;
+  width: 100vw;
 }
 
 h1,
@@ -27,16 +23,16 @@ h2 {
 }
 
 #container {
-  height: 100vh;
-  width: 100vw;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  width: 100%;
 }
 
 #main-heading {
-  background-color: teal;
+  background-color: #333446;
   padding: 0.5rem;
-  color: white;
+  color: #eeeeee;
   flex: 10%;
 }
 
@@ -47,7 +43,7 @@ h2 {
 }
 
 #left-div {
-  background-color: lightgrey;
+  background-color: #1c1d31;
   flex: 40%;
 }
 
@@ -71,12 +67,26 @@ h2 {
 }
 
 #left-div-question-panel {
-  background-color: lightskyblue;
+  background-color: #333446;
+  color: #e0e0e0;
   overflow: auto;
 }
 
+#quesHeadingNode,
+#commentHeadingNode {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.icon {
+  color: gold;
+  margin: auto 5px;
+  padding: 5px;
+}
+
 #right-div {
-  background-color: whitesmoke;
+  background-color: #1c1d31;
   flex: 60%;
   display: flex;
   flex-direction: column;
@@ -88,6 +98,9 @@ h2 {
   flex-direction: column;
   justify-content: center;
   margin: 0px auto;
+  overflow: auto;
+  background-color: #333446;
+  color: #e0e0e0;
 }
 
 #right-div-question-form > h2 {
@@ -112,12 +125,13 @@ h2 {
 
 #right-div-question-resolve-form {
   height: 100%;
-  background-color: red;
+  background-color: #1c1d31;
   margin: 0px;
   padding: 10px;
   display: flex;
   flex-direction: column;
   display: none;
+  color: #e0e0e0;
 }
 
 #question {
@@ -125,13 +139,18 @@ h2 {
 }
 
 #right-div-question-panel {
-  background-color: lightcoral;
 }
 
 #right-div-question-buttons {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+#commentUtilityBtnNode {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
 }
 
 .questionBtn {
@@ -142,6 +161,17 @@ h2 {
   flex: 25%;
 }
 
+#right-div-response-panel {
+}
+
 #add-response {
   flex: 50%;
+}
+
+.dynamicNode {
+  background-color: #333446;
+  color: #e0e0e0;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 5px;
 }
