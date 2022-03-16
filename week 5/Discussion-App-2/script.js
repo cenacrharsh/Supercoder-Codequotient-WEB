@@ -488,18 +488,34 @@ function updateAndConvertTime(element) {
   };
 }
 
-//! calculate time passed since creation of question
+//! calculate time passed since creation of question/response
 function timePassedSinceCreation(creationTime) {
   let currentTime = Date.now();
   let timePassed = currentTime - new Date(creationTime).getTime();
 
-  let secPassed = parseInt(timePassed / 1000);
-  let minPassed = parseInt(secPassed / 60);
-  let hourPassed = parseInt(minPassed / 60);
+  let time = parseInt(timePassed / 1000);
 
-  return (
-    hourPassed + " hours " + minPassed + " minutes " + secPassed + " seconds"
-  );
+  let hours = Math.floor(time / 3600);
+  let minutes = Math.floor((time - hours * 3600) / 60);
+  let seconds = time - hours * 3600 - minutes * 60;
+
+  if (seconds < 10 || seconds == 0) {
+    seconds = "0" + seconds;
+  }
+  if (minutes < 10 || minutes == 0) {
+    minutes = "0" + minutes;
+  }
+  if (hours < 10 || hours == 0) {
+    hours = "0" + hours;
+  }
+
+  if (hours == 0 && minutes == 0) {
+    return " a few seconds ";
+  } else if (hours == 0) {
+    return minutes + " minute " + seconds + " seconds";
+  } else {
+    return hours + " hour " + minutes + " minutes " + seconds + " seconds";
+  }
 }
 
 //! clear question form
