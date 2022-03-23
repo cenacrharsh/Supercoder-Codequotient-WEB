@@ -73,27 +73,19 @@ textArea.addEventListener("keyup", function eventHandler(event) {
     let newInputText = textArea.value;
     let taskId = selectedTodo.id;
 
-    selectedTodo.taskPara.innerHTML = newInputText;
+    //> update todo in server
+    let postObj = {
+      id: taskId,
+      text: newInputText,
+    };
 
-    selectedTodo = null;
+    updateTodoInServer(postObj, function () {
+      selectedTodo.taskPara.innerHTML = newInputText;
 
-    textArea.value = "";
+      selectedTodo = null;
 
-    //> update in local storage
-    var storedItemsInLocalStorage = localStorage.getItem("todos");
-
-    if (storedItemsInLocalStorage !== null) {
-      todos = JSON.parse(storedItemsInLocalStorage);
-
-      //* updating task text of selected task object in local storage
-      todos.forEach(function (todo) {
-        if (todo.id === taskId) {
-          todo.text = newInputText;
-        }
-      });
-
-      localStorage.setItem("todos", JSON.stringify(todos));
-    }
+      textArea.value = "";
+    });
   }
 });
 
@@ -117,7 +109,7 @@ getAllTodosFromServer(function (todos) {
     taskEditBtn.setAttribute("class", "btn taskEditBtn");
     taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
 
-    //> if todo.isCompleted is true in local storage
+    //> if todo.isCompleted is true in server
     if (todo.isCompleted) {
       //* checking checkbox
       taskReadCheckbox.checked = todo.isCompleted;
@@ -171,7 +163,6 @@ function editClickHandler(event) {
 
   //* setting selected todo's id to selectedTodoId
   let selectedTodoId = taskId;
-  let selectedTodoText = taskText;
 
   let selectedTodoObj = {
     id: selectedTodoId,
@@ -193,7 +184,12 @@ function checkboxClickHandler(event) {
   var taskId = taskPara.id;
 
   //> updating todos in server
-  updateTodoInServer(taskId, taskCompletedStatus, function () {
+  let postObj = {
+    id: taskId,
+    status: taskCompletedStatus,
+  };
+
+  updateTodoInServer(postObj, function () {
     if (taskCompletedStatus) {
       taskPara.classList.add("taskCompletedStatus");
     } else {
@@ -219,6 +215,7 @@ function getAllTodosFromServer(callback) {
     if (response.length != "") {
       todos = JSON.parse(response);
     }
+    console.log("Fetched All ToDos from Server");
     callback(todos);
   });
 }
@@ -229,6 +226,7 @@ function saveTodoInServer(todo, callback) {
   request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   request.send(JSON.stringify(todo));
   request.addEventListener("load", function () {
+    console.log("Saved Updated ToDos in Server");
     callback();
   });
 }
@@ -245,16 +243,12 @@ function deleteTodoFromServer(taskId, callback) {
   request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   request.send(postData);
   request.addEventListener("load", function () {
+    console.log("Deleted ToDo from Server");
     callback();
   });
 }
 
-function updateTodoInServer(taskId, taskCompletedStatus, callback) {
-  let postObj = {
-    id: taskId,
-    status: taskCompletedStatus,
-  };
-
+function updateTodoInServer(postObj, callback) {
   let postData = JSON.stringify(postObj);
 
   var request = new XMLHttpRequest();
@@ -263,6 +257,6 @@ function updateTodoInServer(taskId, taskCompletedStatus, callback) {
   request.send(postData);
   request.addEventListener("load", function () {
     callback();
-    console.log("updated");
+    console.log("Updated ToDo in Server");
   });
 }

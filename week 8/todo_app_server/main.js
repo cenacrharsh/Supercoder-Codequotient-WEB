@@ -39,6 +39,7 @@ app.get("/script.js", function (req, res) {
 app.get("/get-todos", function (req, res) {
   read("./db.txt", function (data) {
     res.json(data);
+    console.log("Fetched All ToDos from DB");
   });
 });
 
@@ -57,7 +58,7 @@ app.post("/save-todo", function (req, res) {
       if (error) {
         res.end("Error Ocurred while saving todos");
       } else {
-        console.log("Saved todos in db");
+        console.log("Saved Updated ToDos in DB");
         res.end();
       }
     });
@@ -88,7 +89,7 @@ app.post("/delete-todo", function (req, res) {
       if (error) {
         res.end("Error Ocurred while saving todos");
       } else {
-        console.log("Saved todos in db");
+        console.log("Deleted ToDo from DB");
         res.end();
       }
     });
@@ -105,12 +106,17 @@ app.post("/update-todo", function (req, res) {
 
     let obj = req.body;
     let taskId = obj.id;
-    let taskCompletedStatus = obj.status;
 
     //* updating task completed status of selected task object in server
     todos.forEach(function (todo) {
       if (todo.id === taskId) {
-        todo.isCompleted = taskCompletedStatus;
+        if (obj.hasOwnProperty("status")) {
+          todo.isCompleted = obj.status;
+        }
+
+        if (obj.hasOwnProperty("text")) {
+          todo.text = obj.text;
+        }
       }
     });
 
@@ -118,7 +124,7 @@ app.post("/update-todo", function (req, res) {
       if (error) {
         res.end("Error Ocurred while saving todos");
       } else {
-        console.log("Saved todos in db");
+        console.log("Updated ToDo in DB");
         res.end();
       }
     });
