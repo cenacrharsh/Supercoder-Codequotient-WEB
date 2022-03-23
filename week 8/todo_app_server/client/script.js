@@ -155,26 +155,11 @@ function deleteClickHandler(event) {
   var todoContainer = todoDiv.parentNode;
   var taskId = todoDiv.children[0].id;
 
-  //> updating todos in local storage
-  var storedItemsInLocalStorage = localStorage.getItem("todos");
-
-  if (storedItemsInLocalStorage !== null) {
-    todos = JSON.parse(storedItemsInLocalStorage);
-
-    //* remove task object from local storage
-    todos = todos.filter(function (todo) {
-      if (todo.id === taskId) {
-        return false;
-      } else {
-        return true;
-      }
-    });
-
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }
-
-  //* remove task from DOM
-  todoContainer.removeChild(todoDiv);
+  //> delete todo from server
+  deleteTodoFromServer(taskId, function () {
+    //> remove task from DOM
+    todoContainer.removeChild(todoDiv);
+  });
 }
 
 //! Event Handler for Edit
@@ -243,13 +228,10 @@ function getAllTodosFromServer(callback) {
   request.send();
   request.addEventListener("load", function (event) {
     let response = JSON.parse(event.target.responseText);
-
     let todos = [];
-
     if (response.length != "") {
       todos = JSON.parse(response);
     }
-
     callback(todos);
   });
 }
@@ -259,6 +241,22 @@ function saveTodoInServer(todo, callback) {
   request.open("POST", "/save-todo");
   request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   request.send(JSON.stringify(todo));
+  request.addEventListener("load", function () {
+    callback();
+  });
+}
+
+function deleteTodoFromServer(taskId, callback) {
+  let postObj = {
+    id: taskId,
+  };
+
+  let postData = JSON.stringify(postObj);
+
+  var request = new XMLHttpRequest();
+  request.open("POST", "/delete-todo");
+  request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  request.send(postData);
   request.addEventListener("load", function () {
     callback();
   });

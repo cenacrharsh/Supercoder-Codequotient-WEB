@@ -64,6 +64,39 @@ app.post("/save-todo", function (req, res) {
   });
 });
 
+app.post("/delete-todo", function (req, res) {
+  res.end();
+
+  read("./db.txt", function (data) {
+    let todos = [];
+
+    if (data.length > 0) {
+      todos = JSON.parse(data);
+    }
+
+    let obj = req.body;
+    let taskId = obj.id;
+
+    //* removing to be deleted todo from array of todos
+    todos = todos.filter(function (todo) {
+      if (todo.id === taskId) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+
+    fs.writeFile("./db.txt", JSON.stringify(todos), function (error) {
+      if (error) {
+        res.end("Error Ocurred while saving todos");
+      } else {
+        console.log("Saved todos in db");
+        res.end();
+      }
+    });
+  });
+});
+
 app.listen(PORT, function () {
   console.log(`Server Running on PORT :: ${PORT}`);
 });
