@@ -1,7 +1,3 @@
-//# Global Variables
-//! array of todo objects
-let todos = [];
-
 //! object containing id and text of selected todo
 let selectedTodo = null;
 
@@ -28,47 +24,48 @@ textArea.addEventListener("keyup", function eventHandler(event) {
       isCompleted: false,
     };
 
-    let taskDiv = document.createElement("div");
-    let taskButtonDiv = document.createElement("div");
-    let taskPara = document.createElement("p");
-    let taskReadCheckbox = document.createElement("input");
-    let taskEditBtn = document.createElement("button");
-    let taskDeleteBtn = document.createElement("button");
+    //> saving todo object in server, and then adding todo to todo panel
+    saveTodoInServer(todo, function () {
+      let taskDiv = document.createElement("div");
+      let taskButtonDiv = document.createElement("div");
+      let taskPara = document.createElement("p");
+      let taskReadCheckbox = document.createElement("input");
+      let taskEditBtn = document.createElement("button");
+      let taskDeleteBtn = document.createElement("button");
 
-    taskReadCheckbox.setAttribute("type", "checkbox");
-    taskPara.setAttribute("id", `${todo.id}`);
+      taskReadCheckbox.setAttribute("type", "checkbox");
+      taskPara.setAttribute("id", `${todo.id}`);
 
-    taskDiv.setAttribute("class", "taskDiv");
-    taskButtonDiv.setAttribute("class", "taskButtonDiv");
-    taskPara.setAttribute("class", "taskPara");
-    taskReadCheckbox.setAttribute("class", "btn taskReadCheckbox");
-    taskEditBtn.setAttribute("class", "btn taskEditBtn");
-    taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
+      taskDiv.setAttribute("class", "taskDiv");
+      taskButtonDiv.setAttribute("class", "taskButtonDiv");
+      taskPara.setAttribute("class", "taskPara");
+      taskReadCheckbox.setAttribute("class", "btn taskReadCheckbox");
+      taskEditBtn.setAttribute("class", "btn taskEditBtn");
+      taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
 
-    taskButtonDiv.appendChild(taskReadCheckbox);
-    taskButtonDiv.appendChild(taskEditBtn);
-    taskButtonDiv.appendChild(taskDeleteBtn);
-    taskDiv.appendChild(taskPara);
-    taskDiv.appendChild(taskButtonDiv);
-    taskContainer.appendChild(taskDiv);
+      taskButtonDiv.appendChild(taskReadCheckbox);
+      taskButtonDiv.appendChild(taskEditBtn);
+      taskButtonDiv.appendChild(taskDeleteBtn);
+      taskDiv.appendChild(taskPara);
+      taskDiv.appendChild(taskButtonDiv);
+      taskContainer.appendChild(taskDiv);
 
-    taskPara.innerHTML = todo.text;
-    taskDeleteBtn.innerHTML = "Delete";
-    taskEditBtn.innerHTML = "Edit";
+      taskPara.innerHTML = todo.text;
+      taskDeleteBtn.innerHTML = "Delete";
+      taskEditBtn.innerHTML = "Edit";
 
-    //> storing tasks in local storage
-    todos.push(todo); //* adding todo object to todos array
-    localStorage.setItem("todos", JSON.stringify(todos)); //* storing todos array in local storage
-    textArea.value = "";
+      //> clearing text area
+      textArea.value = "";
 
-    //! Delete Button Functionality
-    taskDeleteBtn.addEventListener("click", deleteClickHandler);
+      //! Delete Button Functionality
+      taskDeleteBtn.addEventListener("click", deleteClickHandler);
 
-    //! Edit Button Functionality
-    taskEditBtn.addEventListener("click", editClickHandler);
+      //! Edit Button Functionality
+      taskEditBtn.addEventListener("click", editClickHandler);
 
-    //! Task Completed Checkbox Functionality
-    taskReadCheckbox.addEventListener("change", checkboxClickHandler);
+      //! Task Completed Checkbox Functionality
+      taskReadCheckbox.addEventListener("change", checkboxClickHandler);
+    });
   }
 
   //> when Enter is clicked while editing existing task
@@ -100,11 +97,8 @@ textArea.addEventListener("keyup", function eventHandler(event) {
   }
 });
 
-//! pulling out stored todos array from local storage & displaying it on screen
-let storedTodos = localStorage.getItem("todos");
-if (storedTodos !== null) {
-  todos = JSON.parse(storedTodos);
-
+//! pulling out stored todos array from server & displaying it on screen
+getAllTodosFromServer(function (todos) {
   todos.forEach(function (todo) {
     let taskDiv = document.createElement("div");
     let taskButtonDiv = document.createElement("div");
@@ -152,7 +146,7 @@ if (storedTodos !== null) {
     //! Task Completed Checkbox Functionality
     taskReadCheckbox.addEventListener("change", checkboxClickHandler);
   });
-}
+});
 
 //! Event Handler for Delete
 function deleteClickHandler(event) {
@@ -239,4 +233,33 @@ function checkboxClickHandler(event) {
 //! Function to Generate Unique ID
 function generateUniqueId() {
   return JSON.stringify(Math.floor(Math.random() * Date.now()));
+}
+
+//# Fetching and Saving Data in Server
+
+function getAllTodosFromServer(callback) {
+  var request = new XMLHttpRequest();
+  request.open("GET", "/get-todos");
+  request.send();
+  request.addEventListener("load", function (event) {
+    let response = JSON.parse(event.target.responseText);
+
+    let todos = [];
+
+    if (response.length != "") {
+      todos = JSON.parse(response);
+    }
+
+    callback(todos);
+  });
+}
+
+function saveTodoInServer(todo, callback) {
+  var request = new XMLHttpRequest();
+  request.open("POST", "/save-todo");
+  request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  request.send(JSON.stringify(todo));
+  request.addEventListener("load", function () {
+    callback();
+  });
 }
