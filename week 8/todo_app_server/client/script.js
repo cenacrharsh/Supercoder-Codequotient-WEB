@@ -192,27 +192,14 @@ function checkboxClickHandler(event) {
   var taskCompletedStatus = todoDiv.children[1].children[0].checked;
   var taskId = taskPara.id;
 
-  if (taskCompletedStatus) {
-    taskPara.classList.add("taskCompletedStatus");
-  } else {
-    taskPara.classList.remove("taskCompletedStatus");
-  }
-
-  //> updating todos in local storage
-  var storedItemsInLocalStorage = localStorage.getItem("todos");
-
-  if (storedItemsInLocalStorage !== null) {
-    todos = JSON.parse(storedItemsInLocalStorage);
-
-    //* updating task completed status of selected task object in local storage
-    todos.forEach(function (todo) {
-      if (todo.id === taskId) {
-        todo.isCompleted = taskCompletedStatus;
-      }
-    });
-
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }
+  //> updating todos in server
+  updateTodoInServer(taskId, taskCompletedStatus, function () {
+    if (taskCompletedStatus) {
+      taskPara.classList.add("taskCompletedStatus");
+    } else {
+      taskPara.classList.remove("taskCompletedStatus");
+    }
+  });
 }
 
 //! Function to Generate Unique ID
@@ -259,5 +246,23 @@ function deleteTodoFromServer(taskId, callback) {
   request.send(postData);
   request.addEventListener("load", function () {
     callback();
+  });
+}
+
+function updateTodoInServer(taskId, taskCompletedStatus, callback) {
+  let postObj = {
+    id: taskId,
+    status: taskCompletedStatus,
+  };
+
+  let postData = JSON.stringify(postObj);
+
+  var request = new XMLHttpRequest();
+  request.open("POST", "/update-todo");
+  request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  request.send(postData);
+  request.addEventListener("load", function () {
+    callback();
+    console.log("updated");
   });
 }

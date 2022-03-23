@@ -65,8 +65,6 @@ app.post("/save-todo", function (req, res) {
 });
 
 app.post("/delete-todo", function (req, res) {
-  res.end();
-
   read("./db.txt", function (data) {
     let todos = [];
 
@@ -83,6 +81,36 @@ app.post("/delete-todo", function (req, res) {
         return false;
       } else {
         return true;
+      }
+    });
+
+    fs.writeFile("./db.txt", JSON.stringify(todos), function (error) {
+      if (error) {
+        res.end("Error Ocurred while saving todos");
+      } else {
+        console.log("Saved todos in db");
+        res.end();
+      }
+    });
+  });
+});
+
+app.post("/update-todo", function (req, res) {
+  read("./db.txt", function (data) {
+    let todos = [];
+
+    if (data.length > 0) {
+      todos = JSON.parse(data);
+    }
+
+    let obj = req.body;
+    let taskId = obj.id;
+    let taskCompletedStatus = obj.status;
+
+    //* updating task completed status of selected task object in server
+    todos.forEach(function (todo) {
+      if (todo.id === taskId) {
+        todo.isCompleted = taskCompletedStatus;
       }
     });
 
