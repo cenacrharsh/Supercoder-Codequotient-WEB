@@ -32,16 +32,27 @@ app.post("/sign-in", function (req, res) {
       }
 
       let userDetails = req.body;
+      let wrongCredentials;
 
       users.forEach(function (user) {
-        if (user.email === userDetails.email) {
+        if (
+          user.email === userDetails.email &&
+          user.password === userDetails.password
+        ) {
           res.status(200);
           res.end();
+        } else {
+          wrongCredentials = true;
         }
       });
 
-      res.status(404);
-      res.end();
+      if (wrongCredentials === true) {
+        res.status(400);
+        res.end();
+      } else {
+        res.status(404);
+        res.end();
+      }
     }
   });
 });

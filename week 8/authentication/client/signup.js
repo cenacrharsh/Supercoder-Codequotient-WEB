@@ -41,9 +41,9 @@ function sendFormDataToServer(userDetails, callback) {
   request.addEventListener("load", function (event) {
     let status = event.target.status;
     if (status === 400) {
-      errorNode.innerHTML = "User Already Exits!!";
+      errorNode.innerHTML = "User Already Exits !!";
     } else if (status === 500) {
-      errorNode.innerHTML = "Error Occurred!!";
+      errorNode.innerHTML = "Error Occurred !!";
     } else if (status === 200) {
       callback();
     }
