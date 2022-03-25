@@ -16,8 +16,6 @@ function handleSignUp(event) {
   let password = passwordInput.value;
   let confirmPassword = confirmPasswordInput.value;
 
-  console.log(email, password, confirmPassword);
-
   if (password === confirmPassword) {
     let userDetails = {
       email: email,
@@ -33,7 +31,6 @@ function handleSignUp(event) {
 }
 
 function sendFormDataToServer(userDetails, callback) {
-  console.log(userDetails);
   let request = new XMLHttpRequest();
   request.open("POST", "/sign-up");
   request.setRequestHeader("Content-Type", "application/json");

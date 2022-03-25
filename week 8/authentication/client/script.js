@@ -9,9 +9,10 @@ signInBtn.addEventListener("click", handleSignIn);
 function handleSignIn(event) {
   event.preventDefault();
 
+  errorNode.innerHTML = "";
+
   let email = emailInput.value;
   let password = passwordInput.value;
-  console.log(email, password);
 
   let userDetails = {
     email: email,

@@ -20,7 +20,6 @@ function read(url, callback) {
 
 app.post("/sign-in", function (req, res) {
   let userDetails = req.body;
-  console.log(userDetails);
   read("./db.txt", function (data) {
     if (data.hasOwnProperty("errno")) {
       res.end("Error in Reading Data from DB");
@@ -78,7 +77,6 @@ app.post("/sign-up", function (req, res) {
 
     fs.writeFile("./db.txt", JSON.stringify(users), function (err) {
       if (err) {
-        console.log(err);
         res.status(500);
         res.end();
       } else {
