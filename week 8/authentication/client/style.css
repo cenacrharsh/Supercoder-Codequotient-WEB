@@ -37,7 +37,7 @@ input {
 #sign-in,
 #sign-up {
   background-color: whitesmoke;
-  padding: 50px;
+  padding: 25px;
   display: flex;
   flex-direction: column;
   border-radius: 10px;

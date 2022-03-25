@@ -19,8 +19,8 @@ function handleSignIn(event) {
     password: password,
   };
 
-  sendFormDataToServer(userDetails, function () {
-    window.location.replace("./home.html");
+  sendFormDataToServer(userDetails, function (name) {
+    window.location.replace(`./home.html?name=${name}`);
   });
 }
 
@@ -36,7 +36,9 @@ function sendFormDataToServer(userDetails, callback) {
     } else if (status === 404) {
       errorNode.innerHTML = "User Not Registered !!";
     } else if (status === 200) {
-      callback();
+      let responseText = JSON.parse(event.target.responseText);
+      let name = responseText.name;
+      callback(name);
     }
   });
 }

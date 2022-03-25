@@ -19,7 +19,6 @@ function read(url, callback) {
 }
 
 app.post("/sign-in", function (req, res) {
-  let userDetails = req.body;
   read("./db.txt", function (data) {
     if (data.hasOwnProperty("errno")) {
       res.end("Error in Reading Data from DB");
@@ -39,7 +38,7 @@ app.post("/sign-in", function (req, res) {
           user.password === userDetails.password
         ) {
           res.status(200);
-          res.end();
+          res.json({ name: user.name });
         } else {
           wrongCredentials = true;
         }
@@ -81,7 +80,7 @@ app.post("/sign-up", function (req, res) {
         res.end();
       } else {
         res.status(200);
-        res.end();
+        res.json({ name: newUser.name });
       }
     });
   });

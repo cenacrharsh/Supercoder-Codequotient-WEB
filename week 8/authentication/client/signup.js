@@ -2,6 +2,7 @@ const signUpBtn = document.getElementById("sign-up-btn");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const confirmPasswordInput = document.getElementById("confirm-password");
+const nameInput = document.getElementById("name");
 const errorNode = document.getElementById("error");
 
 //! adding click event listener to sign up button
@@ -12,18 +13,20 @@ function handleSignUp(event) {
 
   errorNode.innerHTML = "";
 
+  let name = nameInput.value;
   let email = emailInput.value;
   let password = passwordInput.value;
   let confirmPassword = confirmPasswordInput.value;
 
   if (password === confirmPassword) {
     let userDetails = {
+      name: name,
       email: email,
       password: password,
     };
 
-    sendFormDataToServer(userDetails, function () {
-      window.location.replace("./home.html");
+    sendFormDataToServer(userDetails, function (name) {
+      window.location.replace(`./home.html?name=${name}`);
     });
   } else {
     errorNode.innerHTML = "Incorrect Password!!";
@@ -42,7 +45,9 @@ function sendFormDataToServer(userDetails, callback) {
     } else if (status === 500) {
       errorNode.innerHTML = "Error Occurred !!";
     } else if (status === 200) {
-      callback();
+      let responseText = JSON.parse(event.target.responseText);
+      let name = responseText.name;
+      callback(name);
     }
   });
 }

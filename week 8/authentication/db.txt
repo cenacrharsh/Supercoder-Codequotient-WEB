@@ -1,1 +1,0 @@
-[{"email":"harsh.nishant.superstar@gmail.com","password":"harsh"},{"email":"test@test.co","password":"1"},{"email":"test@test.co","password":"123456"},{"email":"test@test.co","password":"123456"},{"email":"test@test.co","password":"123456"},{"email":"test@test.co","password":"123456"},{"email":"test@test.co","password":"123456"}]
