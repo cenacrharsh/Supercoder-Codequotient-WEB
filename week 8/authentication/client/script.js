@@ -18,7 +18,9 @@ function handleSignIn(event) {
     password: password,
   };
 
-  sendFormDataToServer(userDetails, function () {});
+  sendFormDataToServer(userDetails, function () {
+    window.location.replace("./home.html");
+  });
 }
 
 function sendFormDataToServer(userDetails, callback) {
@@ -28,12 +30,11 @@ function sendFormDataToServer(userDetails, callback) {
   request.setRequestHeader("Content-Type", "application/json");
   request.send(JSON.stringify(userDetails));
   request.addEventListener("load", function (event) {
-    let response = event.target.responseText;
-
-    let users = [];
-
-    if (response != "") {
-      users = JSON.parse(response);
+    let status = event.target.status;
+    if (status === 404) {
+      errorNode.innerHTML = "User Not Registered!!";
+    } else if (status === 200) {
+      callback();
     }
   });
 }

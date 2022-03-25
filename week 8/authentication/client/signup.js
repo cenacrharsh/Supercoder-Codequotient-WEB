@@ -10,7 +10,7 @@ signUpBtn.addEventListener("click", handleSignUp);
 function handleSignUp(event) {
   event.preventDefault();
 
-  console.log("sign up click");
+  errorNode.innerHTML = "";
 
   let email = emailInput.value;
   let password = passwordInput.value;
@@ -27,6 +27,8 @@ function handleSignUp(event) {
     sendFormDataToServer(userDetails, function () {
       window.location.replace("./home.html");
     });
+  } else {
+    errorNode.innerHTML = "Incorrect Password!!";
   }
 }
 
@@ -39,7 +41,7 @@ function sendFormDataToServer(userDetails, callback) {
   request.addEventListener("load", function (event) {
     let status = event.target.status;
     if (status === 400) {
-      errorNode.innerHTML = "User Already Exits!";
+      errorNode.innerHTML = "User Already Exits!!";
     } else if (status === 500) {
       errorNode.innerHTML = "Error Occurred!!";
     } else if (status === 200) {

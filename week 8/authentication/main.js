@@ -27,14 +27,26 @@ app.post("/sign-in", function (req, res) {
     } else {
       let users = [];
 
-      if (data != "") {
+      if (data.length > 0) {
+        users = JSON.parse(data);
       }
+
+      let userDetails = req.body;
+
+      users.forEach(function (user) {
+        if (user.email === userDetails.email) {
+          res.status(200);
+          res.end();
+        }
+      });
+
+      res.status(404);
+      res.end();
     }
   });
 });
 
 app.post("/sign-up", function (req, res) {
-  console.log("res recived");
   read("./db.txt", function (data) {
     let users = [];
 
@@ -54,9 +66,8 @@ app.post("/sign-up", function (req, res) {
     users.push(newUser);
 
     fs.writeFile("./db.txt", JSON.stringify(users), function (err) {
-      console.log(err);
       if (err) {
-        console.log("w errror");
+        console.log(err);
         res.status(500);
         res.end();
       } else {
