@@ -9,12 +9,12 @@
   </head>
   <body>
     <div id="container">
-      <div id="logout">
+      <div id="sign-up">
         <div id="heading">
           <h1>Sign Up</h1>
         </div>
 
-        <form action="" id="logout-form">
+        <form action="/sign-up" method="POST" id="sign-up-form">
           <label for="email">Email</label>
           <input type="email" id="email" required />
 
@@ -24,7 +24,7 @@
           <label for="confirm-password">Confirm Password</label>
           <input type="password" id="confirm-password" required />
 
-          <button type="submit" class="btn">Sign Up</button>
+          <button type="submit" class="btn" id="sign-up-btn">Sign Up</button>
         </form>
 
         <div id="footer">
@@ -33,6 +33,6 @@
         </div>
       </div>
     </div>
-    <script src="./script.js"></script>
+    <script src="./signup.js"></script>
   </body>
 </html>

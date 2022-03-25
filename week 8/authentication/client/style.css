@@ -34,8 +34,8 @@ input {
   outline: none;
 }
 
-#login,
-#logout {
+#sign-in,
+#sign-up {
   background-color: whitesmoke;
   padding: 50px;
   display: flex;
@@ -49,8 +49,8 @@ input {
   padding: 0px 0px 10px 0px;
 }
 
-#login-form,
-#logout-form {
+#sign-in-form,
+#sign-up-form {
   display: flex;
   flex-direction: column;
   padding: 0px 0px 10px 0px;
