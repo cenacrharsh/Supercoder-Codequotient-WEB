@@ -49,6 +49,14 @@ input {
   padding: 0px 0px 10px 0px;
 }
 
+#error {
+  color: red;
+  padding: 0px 0px 10px 0px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
 #sign-in-form,
 #sign-up-form {
   display: flex;

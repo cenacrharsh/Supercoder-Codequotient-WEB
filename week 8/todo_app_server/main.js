@@ -20,6 +20,7 @@ function read(filePath, callback) {
 
 app.get("/", function (req, res) {
   read("./client/index.html", function (data) {
+    // todo: handle error here
     res.end(data);
   });
 });

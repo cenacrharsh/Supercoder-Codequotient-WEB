@@ -25,12 +25,47 @@ app.post("/sign-in", function (req, res) {
     if (data.hasOwnProperty("errno")) {
       res.end("Error in Reading Data from DB");
     } else {
-      res.end(data);
+      let users = [];
+
+      if (data != "") {
+      }
     }
   });
 });
 
-app.post("/sign-up", function (req, res) {});
+app.post("/sign-up", function (req, res) {
+  console.log("res recived");
+  read("./db.txt", function (data) {
+    let users = [];
+
+    if (data.length > 0) {
+      users = JSON.parse(data);
+    }
+
+    let newUser = req.body;
+
+    users.forEach(function (user) {
+      if (user.email === newUser.email) {
+        res.status(400);
+        res.end();
+      }
+    });
+
+    users.push(newUser);
+
+    fs.writeFile("./db.txt", JSON.stringify(users), function (err) {
+      console.log(err);
+      if (err) {
+        console.log("w errror");
+        res.status(500);
+        res.end();
+      } else {
+        res.status(200);
+        res.end();
+      }
+    });
+  });
+});
 
 app.listen(PORT, function () {
   console.log(`Server Running on PORT :: ${PORT}`);

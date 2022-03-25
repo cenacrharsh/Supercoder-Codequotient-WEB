@@ -212,7 +212,7 @@ function getAllTodosFromServer(callback) {
   request.addEventListener("load", function (event) {
     let response = JSON.parse(event.target.responseText);
     let todos = [];
-    if (response.length != "") {
+    if (response != "") {
       todos = JSON.parse(response);
     }
     console.log("Fetched All ToDos from Server");

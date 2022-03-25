@@ -1,6 +1,7 @@
 const signInBtn = document.getElementById("sign-in-btn");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
+const errorDiv = document.getElementById("error");
 
 //! adding click event listener to sign in button
 signInBtn.addEventListener("click", handleSignIn);
@@ -26,7 +27,13 @@ function sendFormDataToServer(userDetails, callback) {
   request.open("POST", "/sign-in");
   request.setRequestHeader("Content-Type", "application/json");
   request.send(JSON.stringify(userDetails));
-  request.addEventListener("load", function () {
-    console.log("data sent to server");
+  request.addEventListener("load", function (event) {
+    let response = event.target.responseText;
+
+    let users = [];
+
+    if (response != "") {
+      users = JSON.parse(response);
+    }
   });
 }
