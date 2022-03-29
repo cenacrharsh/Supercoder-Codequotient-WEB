@@ -18,18 +18,22 @@ function handleSignUp(event) {
   let password = passwordInput.value;
   let confirmPassword = confirmPasswordInput.value;
 
-  if (password === confirmPassword) {
-    let userDetails = {
-      name: name,
-      email: email,
-      password: password,
-    };
+  if (name != "" && email != "" && password != "" && confirmPassword != "") {
+    if (password === confirmPassword) {
+      let userDetails = {
+        name: name,
+        email: email,
+        password: password,
+      };
 
-    sendFormDataToServer(userDetails, function (name) {
-      window.location.replace(`./home.html?name=${name}`);
-    });
+      sendFormDataToServer(userDetails, function (name) {
+        window.location.replace(`./home.html?name=${name}`);
+      });
+    } else {
+      errorNode.innerHTML = "Incorrect Password!!";
+    }
   } else {
-    errorNode.innerHTML = "Incorrect Password!!";
+    errorNode.innerHTML = "Fill All The Sections Completely !!!";
   }
 }
 
