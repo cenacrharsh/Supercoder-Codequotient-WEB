@@ -5,6 +5,41 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
+h1,
+h2 {
+  margin: 5px 0px;
+  padding: 5px 0px;
+}
+
+#header {
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-weight: bold;
+  color: blue;
+  font-size: 17px;
+}
+
+#sign-out-btn {
+  background-color: #0066ff;
+  color: white;
+  width: 150px;
+  border: none;
+  outline: none;
+  margin: 10px 0px;
+  padding: 10px 0px;
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#sign-out-btn:hover {
+  background-color: #0859d2;
+  font-size: 18px;
+}
+
 #container {
   display: flex;
   height: 100vh;

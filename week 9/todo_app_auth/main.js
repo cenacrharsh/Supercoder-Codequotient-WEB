@@ -44,7 +44,7 @@ app.get("/", function (req, res) {
 });
 
 app.post("/sign-in", function (req, res) {
-  read("./db.txt", function (err, data) {
+  read("./user.txt", function (err, data) {
     if (err) {
       res.end("Error in Reading Data from DB");
     } else {
@@ -84,7 +84,7 @@ app.post("/sign-in", function (req, res) {
 });
 
 app.post("/sign-up", function (req, res) {
-  read("./db.txt", function (err, data) {
+  read("./user.txt", function (err, data) {
     if (err) {
       res.end("Error in Reading Data from DB");
     } else {
@@ -105,7 +105,7 @@ app.post("/sign-up", function (req, res) {
 
       users.push(newUser);
 
-      fs.writeFile("./db.txt", JSON.stringify(users), function (err) {
+      fs.writeFile("./user.txt", JSON.stringify(users), function (err) {
         if (err) {
           res.status(500);
           res.end();
@@ -121,104 +121,115 @@ app.post("/sign-up", function (req, res) {
   });
 });
 
-// app.get("/get-todos", function (req, res) {
-//   read("./db.txt", function (data) {
-//     res.json(data);
-//     console.log("Fetched All ToDos from DB");
-//   });
-// });
+app.get("/get-todos", function (req, res) {
+  read("./todo.txt", function (err, data) {
+    if (err) {
+      res.end("Error in Reading Data from DB");
+    }
+    res.json(data);
+    console.log("Fetched All ToDos from DB");
+  });
+});
 
-// app.post("/save-todo", function (req, res) {
-//   read("./db.txt", function (data) {
-//     let todos = [];
+app.post("/save-todo", function (req, res) {
+  read("./todo.txt", function (err, data) {
+    if (err) {
+      res.end("Error in Reading Data from DB");
+    }
 
-//     if (data.length > 0) {
-//       todos = JSON.parse(data);
-//     }
-//     let newTodo = req.body;
+    let todos = [];
 
-//     todos.push(newTodo);
+    if (data.length > 0) {
+      todos = JSON.parse(data);
+    }
+    let newTodo = req.body;
 
-//     fs.writeFile("./db.txt", JSON.stringify(todos), function (error) {
-//       if (error) {
-//         res.end("Error Ocurred while saving todos");
-//       } else {
-//         console.log("Saved Updated ToDos in DB");
-//         res.end();
-//       }
-//     });
-//   });
-// });
+    todos.push(newTodo);
 
-// app.post("/delete-todo", function (req, res) {
-//   read("./db.txt", function (data) {
-//     let todos = [];
+    fs.writeFile("./todo.txt", JSON.stringify(todos), function (error) {
+      if (error) {
+        res.end("Error Ocurred while saving todos");
+      } else {
+        console.log("Saved Updated ToDos in DB");
+        res.end();
+      }
+    });
+  });
+});
 
-//     if (data.length > 0) {
-//       todos = JSON.parse(data);
-//     }
+app.post("/delete-todo", function (req, res) {
+  read("./todo.txt", function (err, data) {
+    if (err) {
+      res.end("Error in Reading Data from DB");
+    }
 
-//     let obj = req.body;
-//     let taskId = obj.id;
+    let todos = [];
 
-//     //* removing to be deleted todo from array of todos
-//     todos = todos.filter(function (todo) {
-//       if (todo.id === taskId) {
-//         return false;
-//       } else {
-//         return true;
-//       }
-//     });
+    if (data.length > 0) {
+      todos = JSON.parse(data);
+    }
 
-//     fs.writeFile("./db.txt", JSON.stringify(todos), function (error) {
-//       if (error) {
-//         res.end("Error Ocurred while saving todos");
-//       } else {
-//         console.log("Deleted ToDo from DB");
-//         res.end();
-//       }
-//     });
-//   });
-// });
+    let obj = req.body;
+    let taskId = obj.id;
 
-// app.post("/update-todo", function (req, res) {
-//   read("./db.txt", function (data) {
-//     let todos = [];
+    //* removing to be deleted todo from array of todos
+    todos = todos.filter(function (todo) {
+      if (todo.id === taskId) {
+        return false;
+      } else {
+        return true;
+      }
+    });
 
-//     if (data.length > 0) {
-//       todos = JSON.parse(data);
-//     }
+    fs.writeFile("./todo.txt", JSON.stringify(todos), function (error) {
+      if (error) {
+        res.end("Error Ocurred while saving todos");
+      } else {
+        console.log("Deleted ToDo from DB");
+        res.end();
+      }
+    });
+  });
+});
 
-//     let obj = req.body;
-//     let taskId = obj.id;
+app.post("/update-todo", function (req, res) {
+  read("./todo.txt", function (err, data) {
+    if (err) {
+      res.end("Error in Reading Data from DB");
+    }
 
-//     //* updating task completed status of selected task object in server
-//     todos.forEach(function (todo) {
-//       if (todo.id === taskId) {
-//         if (obj.hasOwnProperty("status")) {
-//           todo.isCompleted = obj.status;
-//         }
+    let todos = [];
 
-//         if (obj.hasOwnProperty("text")) {
-//           todo.text = obj.text;
-//         }
-//       }
-//     });
+    if (data.length > 0) {
+      todos = JSON.parse(data);
+    }
 
-//     fs.writeFile("./db.txt", JSON.stringify(todos), function (error) {
-//       if (error) {
-//         res.end("Error Ocurred while saving todos");
-//       } else {
-//         console.log("Updated ToDo in DB");
-//         res.end();
-//       }
-//     });
-//   });
-// });
+    let obj = req.body;
+    let taskId = obj.id;
 
-// app.listen(PORT, function () {
-//   console.log(`Server Running on PORT :: ${PORT}`);
-// });
+    //* updating task completed status of selected task object in server
+    todos.forEach(function (todo) {
+      if (todo.id === taskId) {
+        if (obj.hasOwnProperty("status")) {
+          todo.isCompleted = obj.status;
+        }
+
+        if (obj.hasOwnProperty("text")) {
+          todo.text = obj.text;
+        }
+      }
+    });
+
+    fs.writeFile("./todo.txt", JSON.stringify(todos), function (error) {
+      if (error) {
+        res.end("Error Ocurred while saving todos");
+      } else {
+        console.log("Updated ToDo in DB");
+        res.end();
+      }
+    });
+  });
+});
 
 app.listen(PORT, function () {
   console.log(`Server Running on PORT :: ${PORT}`);

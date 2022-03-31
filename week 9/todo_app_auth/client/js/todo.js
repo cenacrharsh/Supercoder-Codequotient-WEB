@@ -4,6 +4,8 @@ let selectedTodo = null;
 //# Fetching HTML elements
 const textArea = document.getElementById("textArea");
 const taskContainer = document.getElementById("taskContainer");
+const usernameNode = document.getElementById("username");
+const signOutBtn = document.getElementById("sign-out-btn");
 
 //! Fetch Name of User from URL
 window.onload = function () {
@@ -11,6 +13,13 @@ window.onload = function () {
   const name = urlParams.get("name");
   usernameNode.innerHTML = name;
 };
+
+//! Adding Click eventListener to SignOut Button
+signOutBtn.addEventListener("click", handleSignOut);
+
+function handleSignOut() {
+  window.location.replace("../signin.html");
+}
 
 //! Adding keyup eventListener to textArea
 textArea.addEventListener("keyup", function eventHandler(event) {
