@@ -30,8 +30,9 @@ function read(filePath, callback) {
 app.get("/", function (req, res) {
   if (req.session.isLoggedIn) {
     res.status(200);
-    let name = req.session.username;
-    res.json({ name: name });
+    let name = req.session.user.username;
+    let id = req.session.user.id;
+    res.json({ name: name, id: id });
   } else {
     read("./client/signin.html", function (err, data) {
       if (err) {
@@ -63,10 +64,12 @@ app.post("/sign-in", function (req, res) {
           user.password === userDetails.password
         ) {
           res.status(200);
-          req.session.isLoggedIn = true;
-          req.session.username = user.name;
+
           req.session.userId = user.id;
-          res.json({ name: user.name });
+          req.session.username = user.name;
+          req.session.isLoggedIn = true;
+
+          res.json({ name: user.name, id: user.id });
         } else {
           wrongCredentials = true;
         }
@@ -111,10 +114,12 @@ app.post("/sign-up", function (req, res) {
           res.end();
         } else {
           res.status(200);
-          req.session.isLoggedIn = true;
-          req.session.username = newUser.name;
+
           req.session.userId = newUser.id;
-          res.json({ name: newUser.name });
+          req.session.username = newUser.name;
+          req.session.isLoggedIn = true;
+
+          res.json({ name: newUser.name, id: newUser.id });
         }
       });
     }

@@ -44,12 +44,16 @@ textArea.addEventListener("keyup", function eventHandler(event) {
     //* to stop cursor going to next line after hitting enter
     event.preventDefault();
 
+    //* pulling out user id from url
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get("id");
+
     //> creating a todo object and putting values inside it
     let todo = {
       id: generateUniqueId(),
       text: value,
       isCompleted: false,
-      // createdBy:
+      createdBy: userId,
     };
 
     //> saving todo object in server, and then adding todo to todo panel
@@ -119,6 +123,23 @@ textArea.addEventListener("keyup", function eventHandler(event) {
 
 //! pulling out stored todos array from server & displaying it on screen
 getAllTodosFromServer(function (todos) {
+  //* pulling out user id from url
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = urlParams.get("id");
+
+  console.log("before", todos);
+
+  //* filtering out only todos made by current user
+  todos = todos.filter(function (todo) {
+    if (todo.createdBy === userId) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  console.log("after", todos);
+
   todos.forEach(function (todo) {
     let taskDiv = document.createElement("div");
     let taskButtonDiv = document.createElement("div");
