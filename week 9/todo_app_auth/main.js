@@ -121,6 +121,13 @@ app.post("/sign-up", function (req, res) {
   });
 });
 
+app.get("/sign-out", function (req, res) {
+  console.log("logout");
+  req.session.destroy();
+  res.status(200);
+  res.end();
+});
+
 app.get("/get-todos", function (req, res) {
   read("./todo.txt", function (err, data) {
     if (err) {

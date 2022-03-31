@@ -18,7 +18,18 @@ window.onload = function () {
 signOutBtn.addEventListener("click", handleSignOut);
 
 function handleSignOut() {
-  window.location.replace("../signin.html");
+  var request = new XMLHttpRequest();
+  request.open("GET", "/sign-out");
+  request.send();
+  request.addEventListener("load", function (event) {
+    let status = event.target.status;
+    if (status === 200) {
+      console.log("Successfully Logged Out!!!");
+      window.location.replace("../signin.html");
+    } else {
+      console.log("Error Occured while Logging Out!!!");
+    }
+  });
 }
 
 //! Adding keyup eventListener to textArea
@@ -38,6 +49,7 @@ textArea.addEventListener("keyup", function eventHandler(event) {
       id: generateUniqueId(),
       text: value,
       isCompleted: false,
+      // createdBy:
     };
 
     //> saving todo object in server, and then adding todo to todo panel
