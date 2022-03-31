@@ -5,6 +5,13 @@ let selectedTodo = null;
 const textArea = document.getElementById("textArea");
 const taskContainer = document.getElementById("taskContainer");
 
+//! Fetch Name of User from URL
+window.onload = function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  const name = urlParams.get("name");
+  usernameNode.innerHTML = name;
+};
+
 //! Adding keyup eventListener to textArea
 textArea.addEventListener("keyup", function eventHandler(event) {
   const keyCode = event.code;

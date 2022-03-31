@@ -20,7 +20,7 @@ function handleSignIn(event) {
   };
 
   sendFormDataToServer(userDetails, function (name) {
-    window.location.replace(`./home.html?name=${name}`);
+    window.location.replace(`../todo.html?name=${name}`);
   });
 }
 

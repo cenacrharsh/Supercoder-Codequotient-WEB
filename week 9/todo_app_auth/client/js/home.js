@@ -11,5 +11,5 @@ window.onload = function () {
 signOutBtn.addEventListener("click", handleSignOut);
 
 function handleSignOut() {
-  window.location.replace("./index.html");
+  window.location.replace("../signin.html");``
 }

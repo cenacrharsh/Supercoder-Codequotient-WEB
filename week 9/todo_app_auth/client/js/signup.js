@@ -21,13 +21,14 @@ function handleSignUp(event) {
   if (name != "" && email != "" && password != "" && confirmPassword != "") {
     if (password === confirmPassword) {
       let userDetails = {
+        id: generateUniqueId(),
         name: name,
         email: email,
         password: password,
       };
 
       sendFormDataToServer(userDetails, function (name) {
-        window.location.replace(`./home.html?name=${name}`);
+        window.location.replace(`../todo.html?name=${name}`);
       });
     } else {
       errorNode.innerHTML = "Incorrect Password!!";
@@ -54,4 +55,9 @@ function sendFormDataToServer(userDetails, callback) {
       callback(name);
     }
   });
+}
+
+//! Function to Generate Unique ID
+function generateUniqueId() {
+  return JSON.stringify(Math.floor(Math.random() * Date.now()));
 }

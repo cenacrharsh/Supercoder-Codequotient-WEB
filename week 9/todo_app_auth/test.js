@@ -1,5 +1,6 @@
 const express = require("express");
 const fs = require("fs");
+const session = require("express-session");
 
 const app = express();
 
@@ -7,6 +8,22 @@ const PORT = 3000;
 
 app.use(express.static("client"));
 app.use(express.json());
+
+// app.use(
+//   session({
+//     secret: "secret key",
+//   })
+// );
+
+app.get("/", function (req, res) {
+  res.end("Hello World");
+});
+
+
+
+/*
+
+auth
 
 function read(url, callback) {
   fs.readFile(url, "utf-8", function (err, data) {
@@ -89,3 +106,4 @@ app.post("/sign-up", function (req, res) {
 app.listen(PORT, function () {
   console.log(`Server Running on PORT :: ${PORT}`);
 });
+*/

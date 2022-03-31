@@ -1,7 +1,7 @@
 {
-  "name": "todo_app_server",
+  "name": "todo_app_auth",
   "version": "1.0.0",
-  "description": "todo app server",
+  "description": "todo app auth",
   "main": "main.js",
   "scripts": {
     "start": "nodemon main.js"
@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.3",
+    "express-session": "^1.17.2",
     "nodemon": "^2.0.15"
   }
 }
