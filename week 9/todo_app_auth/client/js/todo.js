@@ -25,7 +25,7 @@ function handleSignOut() {
     let status = event.target.status;
     if (status === 200) {
       console.log("Successfully Logged Out!!!");
-      window.location.replace("../signin.html");
+      window.location.replace("/");
     } else {
       console.log("Error Occured while Logging Out!!!");
     }
@@ -40,7 +40,7 @@ textArea.addEventListener("keyup", function eventHandler(event) {
   let value = textArea.value;
 
   //> when Enter is clicked while creating new task
-  if (keyCode === "Enter" && value !== "" && selectedTodo === null) {
+  if (keyCode === "Enter" && value !== "\n" && selectedTodo === null) {
     //* to stop cursor going to next line after hitting enter
     event.preventDefault();
 

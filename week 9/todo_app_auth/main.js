@@ -8,12 +8,12 @@ const app = express();
 
 //! Middleware
 app.use(express.json());
-app.use(express.static("client"));
 app.use(
   session({
-    secret: "secrey key",
+    secret: "secret key",
   })
 );
+
 
 function read(filePath, callback) {
   fs.readFile(`${filePath}`, "utf-8", function (err, data) {
@@ -25,13 +25,41 @@ function read(filePath, callback) {
   });
 }
 
+app.get("/todo.html", function(req, res){
+  if(req.session.isLoggedIn){
+    read("./client/todo.html", function(err, data){
+      if (err) {
+      res.end("Error in Reading Data from DB");
+    } else {
+      res.send(data);
+    }
+    })
+  }
+  else
+  {
+    res.redirect("/");
+  }
+});
+
+app.use(express.static("client"));
+
+function auth(req, res, next) {
+  if(req.session.isLoggedIn){
+    next();
+  }
+  else
+  {
+    res.redirect("/");
+  }
+}
+
 //! Authentication
 
 app.get("/", function (req, res) {
   if (req.session.isLoggedIn) {
     res.status(200);
-    let name = req.session.user.username;
-    let id = req.session.user.id;
+    let name = req.session.username;
+    let id = req.session.id;
     res.json({ name: name, id: id });
   } else {
     read("./client/signin.html", function (err, data) {
@@ -126,14 +154,14 @@ app.post("/sign-up", function (req, res) {
   });
 });
 
-app.get("/sign-out", function (req, res) {
+app.get("/sign-out", auth, function (req, res) {
   console.log("logout");
   req.session.destroy();
   res.status(200);
   res.end();
 });
 
-app.get("/get-todos", function (req, res) {
+app.get("/get-todos", auth, function (req, res) {
   read("./todo.txt", function (err, data) {
     if (err) {
       res.end("Error in Reading Data from DB");
@@ -143,7 +171,7 @@ app.get("/get-todos", function (req, res) {
   });
 });
 
-app.post("/save-todo", function (req, res) {
+app.post("/save-todo", auth, function (req, res) {
   read("./todo.txt", function (err, data) {
     if (err) {
       res.end("Error in Reading Data from DB");
@@ -169,7 +197,7 @@ app.post("/save-todo", function (req, res) {
   });
 });
 
-app.post("/delete-todo", function (req, res) {
+app.post("/delete-todo", auth, function (req, res) {
   read("./todo.txt", function (err, data) {
     if (err) {
       res.end("Error in Reading Data from DB");
@@ -204,7 +232,7 @@ app.post("/delete-todo", function (req, res) {
   });
 });
 
-app.post("/update-todo", function (req, res) {
+app.post("/update-todo", auth, function (req, res) {
   read("./todo.txt", function (err, data) {
     if (err) {
       res.end("Error in Reading Data from DB");
