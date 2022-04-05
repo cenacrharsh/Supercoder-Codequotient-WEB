@@ -8,12 +8,17 @@ const app = express();
 
 //! Middleware
 app.use(express.json());
+app.use(express.urlencoded());
 app.use(express.static("client"));
 app.use(
   session({
-    secret: "secrey key",
+    secret: "secret key",
   })
 );
+
+//! Setting Up Template Engine
+app.set("view engine", "ejs");
+app.set("views", "view-files");
 
 function read(filePath, callback) {
   fs.readFile(`${filePath}`, "utf-8", function (err, data) {
@@ -30,9 +35,16 @@ function read(filePath, callback) {
 app.get("/", function (req, res) {
   if (req.session.isLoggedIn) {
     res.status(200);
-    let name = req.session.user.username;
-    let id = req.session.user.id;
-    res.json({ name: name, id: id });
+    let name = req.session.username;
+    let id = req.session.userId;
+    read("./todo.txt", function (err, data) {
+      if (err) {
+        res.end("Error in Reading Data from DB");
+      } else {
+        let todos = JSON.parse(data);
+        res.render("todo.ejs", { name: name, id: id, todos: todos });
+      }
+    });
   } else {
     read("./client/signin.html", function (err, data) {
       if (err) {
@@ -69,7 +81,7 @@ app.post("/sign-in", function (req, res) {
           req.session.username = user.name;
           req.session.isLoggedIn = true;
 
-          res.json({ name: user.name, id: user.id });
+          res.end();
         } else {
           wrongCredentials = true;
         }
@@ -119,7 +131,7 @@ app.post("/sign-up", function (req, res) {
           req.session.username = newUser.name;
           req.session.isLoggedIn = true;
 
-          res.json({ name: newUser.name, id: newUser.id });
+          res.end();
         }
       });
     }

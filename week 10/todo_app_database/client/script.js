@@ -4,26 +4,6 @@ let selectedTodo = null;
 //# Fetching HTML elements
 const textArea = document.getElementById("textArea");
 const taskContainer = document.getElementById("taskContainer");
-const usernameNode = document.getElementById("username");
-const signOutBtn = document.getElementById("sign-out-btn");
-
-//! Adding Click eventListener to SignOut Button
-signOutBtn.addEventListener("click", handleSignOut);
-
-function handleSignOut() {
-  var request = new XMLHttpRequest();
-  request.open("GET", "/sign-out");
-  request.send();
-  request.addEventListener("load", function (event) {
-    let status = event.target.status;
-    if (status === 200) {
-      console.log("Successfully Logged Out!!!");
-      window.location.replace("../signin.html");
-    } else {
-      console.log("Error Occured while Logging Out!!!");
-    }
-  });
-}
 
 //! Adding keyup eventListener to textArea
 textArea.addEventListener("keyup", function eventHandler(event) {
@@ -37,16 +17,11 @@ textArea.addEventListener("keyup", function eventHandler(event) {
     //* to stop cursor going to next line after hitting enter
     event.preventDefault();
 
-    //* pulling out user id from url
-    const urlParams = new URLSearchParams(window.location.search);
-    const userId = urlParams.get("id");
-
     //> creating a todo object and putting values inside it
     let todo = {
       id: generateUniqueId(),
       text: value,
       isCompleted: false,
-      createdBy: userId,
     };
 
     //> saving todo object in server, and then adding todo to todo panel
@@ -115,34 +90,55 @@ textArea.addEventListener("keyup", function eventHandler(event) {
 });
 
 //! pulling out stored todos array from server & displaying it on screen
-const taskReadCheckbox = document.getElementsByClassName("taskReadCheckbox");
-const taskPara = document.getElementsByClassName("taskPara");
-const taskDeleteBtn = document.getElementsByClassName("taskDeleteBtn");
-const taskEditBtn = document.getElementsByClassName("taskEditBtn");
+getAllTodosFromServer(function (todos) {
+  todos.forEach(function (todo) {
+    let taskDiv = document.createElement("div");
+    let taskButtonDiv = document.createElement("div");
+    let taskPara = document.createElement("p");
+    let taskReadCheckbox = document.createElement("input");
+    let taskEditBtn = document.createElement("button");
+    let taskDeleteBtn = document.createElement("button");
 
-// //> if todo.isCompleted is true in server
-// if (todo.isCompleted) {
-//   //* checking checkbox
-//   taskReadCheckbox.checked = todo.isCompleted;
+    taskReadCheckbox.setAttribute("type", "checkbox");
+    taskPara.setAttribute("id", `${todo.id}`);
 
-//   //* adding class .taskCompletedStatus to taskPara
-//   taskPara.classList.add("taskCompletedStatus");
-// }
+    taskDiv.setAttribute("class", "taskDiv");
+    taskButtonDiv.setAttribute("class", "taskButtonDiv");
+    taskPara.setAttribute("class", "taskPara");
+    taskReadCheckbox.setAttribute("class", "btn taskReadCheckbox");
+    taskEditBtn.setAttribute("class", "btn taskEditBtn");
+    taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
 
-for (let i = 0; i < taskDeleteBtn.length; i++) {
-  //! Delete Button Functionality
-  taskDeleteBtn[i].addEventListener("click", deleteClickHandler);
-}
+    //> if todo.isCompleted is true in server
+    if (todo.isCompleted) {
+      //* checking checkbox
+      taskReadCheckbox.checked = todo.isCompleted;
 
-for (let i = 0; i < taskEditBtn.length; i++) {
-  //! Edit Button Functionality
-  taskEditBtn[i].addEventListener("click", editClickHandler);
-}
+      //* adding class .taskCompletedStatus to taskPara
+      taskPara.classList.add("taskCompletedStatus");
+    }
 
-for (let i = 0; i < taskReadCheckbox.length; i++) {
-  //! Task Completed Checkbox Functionality
-  taskReadCheckbox[i].addEventListener("change", checkboxClickHandler);
-}
+    taskButtonDiv.appendChild(taskReadCheckbox);
+    taskButtonDiv.appendChild(taskEditBtn);
+    taskButtonDiv.appendChild(taskDeleteBtn);
+    taskDiv.appendChild(taskPara);
+    taskDiv.appendChild(taskButtonDiv);
+    taskContainer.appendChild(taskDiv);
+
+    taskPara.innerHTML = todo.text;
+    taskDeleteBtn.innerHTML = "Delete";
+    taskEditBtn.innerHTML = "Edit";
+
+    //! Delete Button Functionality
+    taskDeleteBtn.addEventListener("click", deleteClickHandler);
+
+    //! Edit Button Functionality
+    taskEditBtn.addEventListener("click", editClickHandler);
+
+    //! Task Completed Checkbox Functionality
+    taskReadCheckbox.addEventListener("change", checkboxClickHandler);
+  });
+});
 
 //! Event Handler for Delete
 function deleteClickHandler(event) {

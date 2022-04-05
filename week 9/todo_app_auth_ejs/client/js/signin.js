@@ -19,8 +19,8 @@ function handleSignIn(event) {
     password: password,
   };
 
-  sendFormDataToServer(userDetails, function (id, name) {
-    window.location.replace(`../todo.html?id=${id}&name=${name}`);
+  sendFormDataToServer(userDetails, function () {
+    window.location.replace("/");
   });
 }
 
@@ -36,10 +36,8 @@ function sendFormDataToServer(userDetails, callback) {
     } else if (status === 404) {
       errorNode.innerHTML = "User Not Registered !!";
     } else if (status === 200) {
-      let responseText = JSON.parse(event.target.responseText);
-      let id = responseText.id;
-      let name = responseText.name;
-      callback(id, name);
+      console.log("Login Successfull!!!");
+      callback();
     }
   });
 }

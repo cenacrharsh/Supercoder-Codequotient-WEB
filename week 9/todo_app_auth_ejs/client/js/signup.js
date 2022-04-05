@@ -27,8 +27,8 @@ function handleSignUp(event) {
         password: password,
       };
 
-      sendFormDataToServer(userDetails, function (id, name) {
-        window.location.replace(`../todo.html?id=${id}&name=${name}`);
+      sendFormDataToServer(userDetails, function () {
+        window.location.replace("/");
       });
     } else {
       errorNode.innerHTML = "Incorrect Password!!";
@@ -50,10 +50,7 @@ function sendFormDataToServer(userDetails, callback) {
     } else if (status === 500) {
       errorNode.innerHTML = "Error Occurred !!";
     } else if (status === 200) {
-      let responseText = JSON.parse(event.target.responseText);
-      let id = responseText.id;
-      let name = responseText.name;
-      callback(id, name);
+      callback();
     }
   });
 }

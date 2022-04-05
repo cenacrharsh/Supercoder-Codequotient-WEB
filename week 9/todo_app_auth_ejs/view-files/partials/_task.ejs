@@ -1,0 +1,20 @@
+<div class="taskDiv">
+  <p
+  id="<%= todo.id %>"
+  class="<%= todo.isCompleted === true ? "todoCompletedStatus" : "" %>">
+    <%= todo.text %>
+  </p>
+
+  <div class="taskButtonDiv">
+    <input
+      type="checkbox"
+      class="taskReadCheckbox"
+      checked="<%= todo.isCompleted == true ? "taskCompletedStatus" : false %>"
+    />
+
+    <button class="btn taskEditBtn">Edit</button>
+    <button class="btn taskDeleteBtn">Delete</button>
+  </div>
+</div>
+
+
