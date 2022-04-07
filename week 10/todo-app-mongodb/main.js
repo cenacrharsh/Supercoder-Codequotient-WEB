@@ -6,6 +6,20 @@ const PORT = 3000;
 
 const app = express();
 
+//# Database
+
+const mongodb = require("mongodb");
+const MongoClient = mongodb.MongoClient;
+const url =
+  "mongodb+srv://harsh:harsh@cluster0.tobfw.mongodb.net/todoDB?retryWrites=true&w=majority";
+const client = new MongoClient(url);
+const dbName = "todoDataBase";
+var dbInstance = null;
+client.connect().then(function () {
+  console.log("DB is Connected !");
+  dbInstance = client.db(dbName);
+});
+
 //! Middleware
 app.use(express.json());
 app.use(
@@ -160,28 +174,17 @@ app.get("/sign-out", auth, function (req, res) {
 
 //! Create
 app.post("/save-todo", auth, function (req, res) {
-  read("./todo.txt", function (err, data) {
-    if (err) {
-      res.end("Error in Reading Data from DB");
+  let newTodo = req.body;
+
+  console.log(newTodo);
+
+  fs.writeFile("./todo.txt", JSON.stringify(todos), function (error) {
+    if (error) {
+      res.end("Error Ocurred while saving todos");
+    } else {
+      console.log("Saved Updated ToDos in DB");
+      res.end();
     }
-
-    let todos = [];
-
-    if (data.length > 0) {
-      todos = JSON.parse(data);
-    }
-    let newTodo = req.body;
-
-    todos.push(newTodo);
-
-    fs.writeFile("./todo.txt", JSON.stringify(todos), function (error) {
-      if (error) {
-        res.end("Error Ocurred while saving todos");
-      } else {
-        console.log("Saved Updated ToDos in DB");
-        res.end();
-      }
-    });
   });
 });
 

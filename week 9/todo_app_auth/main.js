@@ -14,7 +14,6 @@ app.use(
   })
 );
 
-
 function read(filePath, callback) {
   fs.readFile(`${filePath}`, "utf-8", function (err, data) {
     if (err) {
@@ -25,18 +24,16 @@ function read(filePath, callback) {
   });
 }
 
-app.get("/todo.html", function(req, res){
-  if(req.session.isLoggedIn){
-    read("./client/todo.html", function(err, data){
+app.get("/todo.html", function (req, res) {
+  if (req.session.isLoggedIn) {
+    read("./client/todo.html", function (err, data) {
       if (err) {
-      res.end("Error in Reading Data from DB");
-    } else {
-      res.send(data);
-    }
-    })
-  }
-  else
-  {
+        res.end("Error in Reading Data from DB");
+      } else {
+        res.send(data);
+      }
+    });
+  } else {
     res.redirect("/");
   }
 });
@@ -44,11 +41,9 @@ app.get("/todo.html", function(req, res){
 app.use(express.static("client"));
 
 function auth(req, res, next) {
-  if(req.session.isLoggedIn){
+  if (req.session.isLoggedIn) {
     next();
-  }
-  else
-  {
+  } else {
     res.redirect("/");
   }
 }
