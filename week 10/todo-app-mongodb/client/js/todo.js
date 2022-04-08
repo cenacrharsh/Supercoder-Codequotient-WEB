@@ -260,9 +260,10 @@ function getAllTodosFromServer(callback) {
   request.send();
   request.addEventListener("load", function (event) {
     let response = JSON.parse(event.target.responseText);
+    console.log(response);
     let todos = [];
     if (response != "") {
-      todos = JSON.parse(response);
+      todos = response;
     }
     console.log("Fetched All ToDos from Server");
     callback(todos);

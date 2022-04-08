@@ -11,7 +11,7 @@ const app = express();
 const mongodb = require("mongodb");
 const MongoClient = mongodb.MongoClient;
 const url =
-  "mongodb+srv://harsh:harsh@cluster0.tobfw.mongodb.net/todoDB?retryWrites=true&w=majority";
+  "mongodb+srv://harsh:harsh@cluster0.tobfw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const client = new MongoClient(url);
 const dbName = "todoDataBase";
 var dbInstance = null;
@@ -35,6 +35,67 @@ function read(filePath, callback) {
     } else {
       callback(null, data);
     }
+  });
+}
+
+function readTodosFromDB(callback) {
+  const collection = dbInstance.collection("todoList");
+
+  collection
+    .find({})
+    .toArray()
+    .then(function (data) {
+      callback(data);
+    });
+}
+
+function saveTodosInDB(data, callback) {
+  const collection = dbInstance.collection("todoList");
+  collection.insertOne(data).then(function () {
+    callback();
+  });
+}
+
+function updateTodosInDB(obj, taskId, callback) {
+  const collection = dbInstance.collection("todoList");
+
+  if (obj.hasOwnProperty("status")) {
+    collection
+      .updateOne(
+        { id: taskId },
+        {
+          $set: {
+            isCompleted: obj.status,
+          },
+        }
+      )
+      .then(function () {
+        console.log("Updated ToDo Completed Status in DB");
+        callback();
+      });
+  }
+
+  if (obj.hasOwnProperty("text")) {
+    collection
+      .updateOne(
+        { id: taskId },
+        {
+          $set: {
+            text: obj.text,
+          },
+        }
+      )
+      .then(function () {
+        console.log("Updated ToDo Text in DB");
+        callback();
+      });
+  }
+}
+
+function deleteTodosInDB(obj, taskId, callback) {
+  const collection = dbInstance.collection("todoList");
+  collection.deleteOne({ id: taskId }).then(function () {
+    callback();
   });
 }
 
@@ -164,114 +225,47 @@ app.post("/sign-up", function (req, res) {
 });
 
 app.get("/sign-out", auth, function (req, res) {
-  console.log("logout");
   req.session.destroy();
   res.status(200);
   res.end();
 });
 
-//# CRUD IN DATABASE
+//# Database
+
+//! Read
+app.get("/get-todos", auth, function (req, res) {
+  readTodosFromDB(function (data) {
+    res.send(data);
+  });
+});
 
 //! Create
 app.post("/save-todo", auth, function (req, res) {
   let newTodo = req.body;
 
-  console.log(newTodo);
-
-  fs.writeFile("./todo.txt", JSON.stringify(todos), function (error) {
-    if (error) {
-      res.end("Error Ocurred while saving todos");
-    } else {
-      console.log("Saved Updated ToDos in DB");
-      res.end();
-    }
-  });
-});
-
-//! Read
-app.get("/get-todos", auth, function (req, res) {
-  read("./todo.txt", function (err, data) {
-    if (err) {
-      res.end("Error in Reading Data from DB");
-    }
-    res.json(data);
-    console.log("Fetched All ToDos from DB");
-  });
-});
-
-//! Update
-app.post("/update-todo", auth, function (req, res) {
-  read("./todo.txt", function (err, data) {
-    if (err) {
-      res.end("Error in Reading Data from DB");
-    }
-
-    let todos = [];
-
-    if (data.length > 0) {
-      todos = JSON.parse(data);
-    }
-
-    let obj = req.body;
-    let taskId = obj.id;
-
-    //* updating task completed status of selected task object in server
-    todos.forEach(function (todo) {
-      if (todo.id === taskId) {
-        if (obj.hasOwnProperty("status")) {
-          todo.isCompleted = obj.status;
-        }
-
-        if (obj.hasOwnProperty("text")) {
-          todo.text = obj.text;
-        }
-      }
-    });
-
-    fs.writeFile("./todo.txt", JSON.stringify(todos), function (error) {
-      if (error) {
-        res.end("Error Ocurred while saving todos");
-      } else {
-        console.log("Updated ToDo in DB");
-        res.end();
-      }
-    });
+  saveTodosInDB(newTodo, function () {
+    res.end();
   });
 });
 
 //! Delete
 app.post("/delete-todo", auth, function (req, res) {
-  read("./todo.txt", function (err, data) {
-    if (err) {
-      res.end("Error in Reading Data from DB");
-    }
+  let obj = req.body;
+  let taskId = obj.id;
 
-    let todos = [];
+  deleteTodosInDB(obj, taskId, function () {
+    console.log("Deleted ToDos in DB");
+    res.end();
+  });
+});
 
-    if (data.length > 0) {
-      todos = JSON.parse(data);
-    }
+//! Update
+app.post("/update-todo", auth, function (req, res) {
+  let obj = req.body;
+  let taskId = obj.id;
 
-    let obj = req.body;
-    let taskId = obj.id;
-
-    //* removing to be deleted todo from array of todos
-    todos = todos.filter(function (todo) {
-      if (todo.id === taskId) {
-        return false;
-      } else {
-        return true;
-      }
-    });
-
-    fs.writeFile("./todo.txt", JSON.stringify(todos), function (error) {
-      if (error) {
-        res.end("Error Ocurred while saving todos");
-      } else {
-        console.log("Deleted ToDo from DB");
-        res.end();
-      }
-    });
+  updateTodosInDB(obj, taskId, function () {
+    res.end();
   });
 });
 
