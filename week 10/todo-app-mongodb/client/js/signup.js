@@ -47,8 +47,6 @@ function sendFormDataToServer(userDetails, callback) {
     let status = event.target.status;
     if (status === 400) {
       errorNode.innerHTML = "User Already Exits !!";
-    } else if (status === 500) {
-      errorNode.innerHTML = "Error Occurred !!";
     } else if (status === 200) {
       let responseText = JSON.parse(event.target.responseText);
       let id = responseText.id;
