@@ -38,6 +38,8 @@ function read(filePath, callback) {
   });
 }
 
+//# CRUD IN DB FOR TODOS
+
 function readTodosFromDB(callback) {
   const collection = dbInstance.collection("todoList");
 
@@ -99,6 +101,27 @@ function deleteTodosInDB(obj, taskId, callback) {
   });
 }
 
+//# CRUD IN DB FOR USERS
+
+function findUserInDB(userDetails, callback) {
+  const collection = dbInstance.collection("usersList");
+
+  collection
+    .find({ email: userDetails.email, password: userDetails.password })
+    .toArray()
+    .then(function (user) {
+      callback(user);
+    });
+}
+
+function createUserInDB(newUser, callback) {
+  const collection = dbInstance.collection("usersList");
+
+  collection.insertOne(newUser).then(function () {
+    callback();
+  });
+}
+
 app.get("/todo.html", function (req, res) {
   if (req.session.isLoggedIn) {
     read("./client/todo.html", function (err, data) {
@@ -143,90 +166,55 @@ app.get("/", function (req, res) {
 });
 
 app.post("/sign-in", function (req, res) {
-  read("./user.txt", function (err, data) {
-    if (err) {
-      res.end("Error in Reading Data from DB");
+  let userDetails = req.body;
+
+  findUserInDB(userDetails, function (user) {
+    if (user.length) {
+      res.status(200);
+
+      req.session.userId = user.id;
+      req.session.username = user.name;
+      req.session.isLoggedIn = true;
+
+      console.log("User Signed In");
+
+      res.json({ name: user.name, id: user.id });
     } else {
-      let users = [];
-
-      if (data.length > 0) {
-        users = JSON.parse(data);
-      }
-
-      let userDetails = req.body;
-      let wrongCredentials;
-
-      users.forEach(function (user) {
-        if (
-          user.email === userDetails.email &&
-          user.password === userDetails.password
-        ) {
-          res.status(200);
-
-          req.session.userId = user.id;
-          req.session.username = user.name;
-          req.session.isLoggedIn = true;
-
-          res.json({ name: user.name, id: user.id });
-        } else {
-          wrongCredentials = true;
-        }
-      });
-
-      if (wrongCredentials === true) {
-        res.status(400);
-        res.end();
-      } else {
-        res.status(404);
-        res.end();
-      }
+      res.status(404);
+      res.end();
     }
   });
 });
 
 app.post("/sign-up", function (req, res) {
-  read("./user.txt", function (err, data) {
-    if (err) {
-      res.end("Error in Reading Data from DB");
-    } else {
-      let users = [];
+  let userDetails = req.body;
 
-      if (data.length > 0) {
-        users = JSON.parse(data);
-      }
-
-      let newUser = req.body;
-
-      users.forEach(function (user) {
-        if (user.email === newUser.email) {
-          res.status(400);
-          res.end();
-        }
-      });
-
-      users.push(newUser);
-
-      fs.writeFile("./user.txt", JSON.stringify(users), function (err) {
-        if (err) {
-          res.status(500);
-          res.end();
-        } else {
-          res.status(200);
-
-          req.session.userId = newUser.id;
-          req.session.username = newUser.name;
-          req.session.isLoggedIn = true;
-
-          res.json({ name: newUser.name, id: newUser.id });
-        }
-      });
+  findUserInDB(userDetails, function (user) {
+    if (user.length) {
+      res.status(400);
+      res.end();
     }
+
+    createUserInDB(userDetails, function () {
+      res.status(200);
+
+      req.session.userId = userDetails.id;
+      req.session.username = userDetails.name;
+      req.session.isLoggedIn = true;
+
+      console.log("New User Signed Up");
+
+      res.json({ name: userDetails.name, id: userDetails.id });
+    });
   });
 });
 
 app.get("/sign-out", auth, function (req, res) {
   req.session.destroy();
   res.status(200);
+
+  console.log("User Logged Out");
+
   res.end();
 });
 

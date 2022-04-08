@@ -31,9 +31,7 @@ function sendFormDataToServer(userDetails, callback) {
   request.send(JSON.stringify(userDetails));
   request.addEventListener("load", function (event) {
     let status = event.target.status;
-    if (status === 400) {
-      errorNode.innerHTML = "Incorrect Email ID/Password !!";
-    } else if (status === 404) {
+    if (status === 404) {
       errorNode.innerHTML = "User Not Registered !!";
     } else if (status === 200) {
       let responseText = JSON.parse(event.target.responseText);
