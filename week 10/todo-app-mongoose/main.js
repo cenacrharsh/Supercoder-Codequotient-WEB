@@ -13,7 +13,7 @@ const MongoClient = mongodb.MongoClient;
 const url =
   "mongodb+srv://harsh:harsh@cluster0.tobfw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const client = new MongoClient(url);
-const dbName = "todoDataBase";
+const dbName = "todoDataBase_mongoose";
 var dbInstance = null;
 client.connect().then(function () {
   console.log("DB is Connected !");
