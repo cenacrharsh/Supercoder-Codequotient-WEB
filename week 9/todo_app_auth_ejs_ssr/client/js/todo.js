@@ -120,15 +120,6 @@ const taskPara = document.getElementsByClassName("taskPara");
 const taskDeleteBtn = document.getElementsByClassName("taskDeleteBtn");
 const taskEditBtn = document.getElementsByClassName("taskEditBtn");
 
-// //> if todo.isCompleted is true in server
-// if (todo.isCompleted) {
-//   //* checking checkbox
-//   taskReadCheckbox.checked = todo.isCompleted;
-
-//   //* adding class .taskCompletedStatus to taskPara
-//   taskPara.classList.add("taskCompletedStatus");
-// }
-
 for (let i = 0; i < taskDeleteBtn.length; i++) {
   //! Delete Button Functionality
   taskDeleteBtn[i].addEventListener("click", deleteClickHandler);
@@ -205,23 +196,6 @@ function checkboxClickHandler(event) {
 //! Function to Generate Unique ID
 function generateUniqueId() {
   return JSON.stringify(Math.floor(Math.random() * Date.now()));
-}
-
-//# Fetching and Saving Data in Server
-
-function getAllTodosFromServer(callback) {
-  var request = new XMLHttpRequest();
-  request.open("GET", "/get-todos");
-  request.send();
-  request.addEventListener("load", function (event) {
-    let response = JSON.parse(event.target.responseText);
-    let todos = [];
-    if (response != "") {
-      todos = JSON.parse(response);
-    }
-    console.log("Fetched All ToDos from Server");
-    callback(todos);
-  });
 }
 
 function saveTodoInServer(todo, callback) {

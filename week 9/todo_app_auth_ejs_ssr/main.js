@@ -13,6 +13,8 @@ app.use(express.static("client"));
 app.use(
   session({
     secret: "secret key",
+    resave: false,
+    saveUninitialized: true,
   })
 );
 
@@ -41,7 +43,12 @@ app.get("/", function (req, res) {
       if (err) {
         res.end("Error in Reading Data from DB");
       } else {
-        let todos = JSON.parse(data);
+        let todos = [];
+
+        if (data.length > 0) {
+          todos = JSON.parse(data);
+        }
+
         res.render("todo.ejs", { name: name, id: id, todos: todos });
       }
     });
@@ -228,8 +235,12 @@ app.post("/update-todo", function (req, res) {
       todos = JSON.parse(data);
     }
 
+    console.log("prev todos", todos);
+
     let obj = req.body;
     let taskId = obj.id;
+
+    console.log("rec obj is: ", obj);
 
     //* updating task completed status of selected task object in server
     todos.forEach(function (todo) {
@@ -245,6 +256,7 @@ app.post("/update-todo", function (req, res) {
     });
 
     fs.writeFile("./todo.txt", JSON.stringify(todos), function (error) {
+      console.log("updated todos", todos);
       if (error) {
         res.end("Error Ocurred while saving todos");
       } else {
