@@ -26,108 +26,102 @@ function handleSignOut() {
 }
 
 //! Adding keyup eventListener to textArea
-textArea.addEventListener("keyup", function eventHandler(event) {
-  const keyCode = event.code;
+// textArea.addEventListener("keyup", function eventHandler(event) {
+//   const keyCode = event.code;
 
-  //* pulling out value from textArea
-  let value = textArea.value;
+//   //* pulling out value from textArea
+//   let value = textArea.value;
 
-  //> when Enter is clicked while creating new task
-  if (keyCode === "Enter" && value !== "" && selectedTodo === null) {
-    //* to stop cursor going to next line after hitting enter
-    event.preventDefault();
+//   //> when Enter is clicked while creating new task
+//   if (keyCode === "Enter" && value !== "" && selectedTodo === null) {
+//     //* to stop cursor going to next line after hitting enter
+//     event.preventDefault();
 
-    //* pulling out user id from url
-    const urlParams = new URLSearchParams(window.location.search);
-    const userId = urlParams.get("id");
+//     //* pulling out user id from url
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const userId = urlParams.get("id");
 
-    //> creating a todo object and putting values inside it
-    let todo = {
-      id: generateUniqueId(),
-      text: value,
-      isCompleted: false,
-      createdBy: userId,
-    };
+//     //> creating a todo object and putting values inside it
+//     let todo = {
+//       id: generateUniqueId(),
+//       text: value,
+//       isCompleted: false,
+//       createdBy: userId,
+//     };
 
-    //> saving todo object in server, and then adding todo to todo panel
-    saveTodoInServer(todo, function () {
-      let taskDiv = document.createElement("div");
-      let taskButtonDiv = document.createElement("div");
-      let taskPara = document.createElement("p");
-      let taskReadCheckbox = document.createElement("input");
-      let taskEditBtn = document.createElement("button");
-      let taskDeleteBtn = document.createElement("button");
+//     //> saving todo object in server, and then adding todo to todo panel
+//     saveTodoInServer(todo, function () {
+//       let taskDiv = document.createElement("div");
+//       let taskButtonDiv = document.createElement("div");
+//       let taskPara = document.createElement("p");
+//       let taskReadCheckbox = document.createElement("input");
+//       let taskEditBtn = document.createElement("button");
+//       let taskDeleteBtn = document.createElement("button");
 
-      taskReadCheckbox.setAttribute("type", "checkbox");
-      taskPara.setAttribute("id", `${todo.id}`);
+//       taskReadCheckbox.setAttribute("type", "checkbox");
+//       taskPara.setAttribute("id", `${todo.id}`);
 
-      taskDiv.setAttribute("class", "taskDiv");
-      taskButtonDiv.setAttribute("class", "taskButtonDiv");
-      taskPara.setAttribute("class", "taskPara");
-      taskReadCheckbox.setAttribute("class", "btn taskReadCheckbox");
-      taskEditBtn.setAttribute("class", "btn taskEditBtn");
-      taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
+//       taskDiv.setAttribute("class", "taskDiv");
+//       taskButtonDiv.setAttribute("class", "taskButtonDiv");
+//       taskPara.setAttribute("class", "taskPara");
+//       taskReadCheckbox.setAttribute("class", "btn taskReadCheckbox");
+//       taskEditBtn.setAttribute("class", "btn taskEditBtn");
+//       taskDeleteBtn.setAttribute("class", "btn taskDeleteBtn");
 
-      taskButtonDiv.appendChild(taskReadCheckbox);
-      taskButtonDiv.appendChild(taskEditBtn);
-      taskButtonDiv.appendChild(taskDeleteBtn);
-      taskDiv.appendChild(taskPara);
-      taskDiv.appendChild(taskButtonDiv);
-      taskContainer.appendChild(taskDiv);
+//       taskButtonDiv.appendChild(taskReadCheckbox);
+//       taskButtonDiv.appendChild(taskEditBtn);
+//       taskButtonDiv.appendChild(taskDeleteBtn);
+//       taskDiv.appendChild(taskPara);
+//       taskDiv.appendChild(taskButtonDiv);
+//       taskContainer.appendChild(taskDiv);
 
-      taskPara.innerHTML = todo.text;
-      taskDeleteBtn.innerHTML = "Delete";
-      taskEditBtn.innerHTML = "Edit";
+//       taskPara.innerHTML = todo.text;
+//       taskDeleteBtn.innerHTML = "Delete";
+//       taskEditBtn.innerHTML = "Edit";
 
-      //> clearing text area
-      textArea.value = "";
+//       //> clearing text area
+//       textArea.value = "";
 
-      //! Delete Button Functionality
-      taskDeleteBtn.addEventListener("click", deleteClickHandler);
+//       //! Delete Button Functionality
+//       taskDeleteBtn.addEventListener("click", deleteClickHandler);
 
-      //! Edit Button Functionality
-      taskEditBtn.addEventListener("click", editClickHandler);
+//       //! Edit Button Functionality
+//       taskEditBtn.addEventListener("click", editClickHandler);
 
-      //! Task Completed Checkbox Functionality
-      taskReadCheckbox.addEventListener("change", checkboxClickHandler);
-    });
-  }
+//       //! Task Completed Checkbox Functionality
+//       taskReadCheckbox.addEventListener("change", checkboxClickHandler);
+//     });
+//   }
 
-  //> when Enter is clicked while editing existing task
-  if (keyCode === "Enter" && value !== "" && selectedTodo !== null) {
-    let newInputText = textArea.value;
-    let taskId = selectedTodo.id;
+//   //> when Enter is clicked while editing existing task
+//   if (keyCode === "Enter" && value !== "" && selectedTodo !== null) {
+//     let newInputText = textArea.value;
+//     let taskId = selectedTodo.id;
 
-    //> update todo in server
-    let postObj = {
-      id: taskId,
-      text: newInputText,
-    };
+//     //> update todo in server
+//     let postObj = {
+//       id: taskId,
+//       text: newInputText,
+//     };
 
-    updateTodoInServer(postObj, function () {
-      selectedTodo.taskPara.innerHTML = newInputText;
+//     updateTodoInServer(postObj, function () {
+//       selectedTodo.taskPara.innerHTML = newInputText;
 
-      selectedTodo = null;
+//       selectedTodo = null;
 
-      textArea.value = "";
-    });
-  }
-});
+//       textArea.value = "";
+//     });
+//   }
+// });
 
-//! pulling out stored todos array from server & displaying it on screen
+//! adding event listeners on buttons
 const taskReadCheckbox = document.getElementsByClassName("taskReadCheckbox");
 const taskPara = document.getElementsByClassName("taskPara");
 const taskDeleteBtn = document.getElementsByClassName("taskDeleteBtn");
-const taskEditBtn = document.getElementsByClassName("taskEditBtn");
 
 for (let i = 0; i < taskDeleteBtn.length; i++) {
   //! Delete Button Functionality
   taskDeleteBtn[i].addEventListener("click", deleteClickHandler);
-}
-
-for (let i = 0; i < taskEditBtn.length; i++) {
-  //! Edit Button Functionality
-  taskEditBtn[i].addEventListener("click", editClickHandler);
 }
 
 for (let i = 0; i < taskReadCheckbox.length; i++) {
@@ -149,33 +143,12 @@ function deleteClickHandler(event) {
   });
 }
 
-//! Event Handler for Edit
-function editClickHandler(event) {
-  var editBtn = event.target;
-  var todoDiv = editBtn.parentNode.parentNode;
-  var taskText = todoDiv.children[0].innerHTML;
-  var taskId = todoDiv.children[0].id;
-
-  //* setting selected todo's id to selectedTodoId
-  let selectedTodoId = taskId;
-
-  let selectedTodoObj = {
-    id: selectedTodoId,
-    taskPara: todoDiv.children[0],
-  };
-
-  selectedTodo = selectedTodoObj;
-
-  //> add selected task text in text area
-  textArea.value = taskText;
-}
-
 //! Event Handler for Checkbox
 function checkboxClickHandler(event) {
   var checkbox = event.target;
   var todoDiv = checkbox.parentNode.parentNode;
   var taskPara = todoDiv.children[0];
-  var taskCompletedStatus = todoDiv.children[1].children[0].checked;
+  var taskCompletedStatus = todoDiv.children[1].children[1].checked;
   var taskId = taskPara.id;
 
   //> updating todos in server
@@ -228,6 +201,8 @@ function deleteTodoFromServer(taskId, callback) {
 
 function updateTodoInServer(postObj, callback) {
   let postData = JSON.stringify(postObj);
+
+  console.log("postData", postData);
 
   var request = new XMLHttpRequest();
   request.open("POST", "/update-todo");

@@ -1,6 +1,7 @@
 const express = require("express");
 const session = require("express-session");
 const fs = require("fs");
+const multer = require("multer");
 
 const PORT = 3000;
 
@@ -10,6 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.static("client"));
+app.use(express.static("uploads"));
 app.use(
   session({
     secret: "secret key",
@@ -17,6 +19,20 @@ app.use(
     saveUninitialized: true,
   })
 );
+
+//! Multer
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + "-" + uniqueSuffix);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 //! Setting Up Template Engine
 app.set("view engine", "ejs");
@@ -48,6 +64,14 @@ app.get("/", function (req, res) {
         if (data.length > 0) {
           todos = JSON.parse(data);
         }
+
+        todos = todos.filter(function (todo) {
+          if (todo.createdBy === id) {
+            return true;
+          } else {
+            return false;
+          }
+        });
 
         res.render("todo.ejs", { name: name, id: id, todos: todos });
       }
@@ -146,7 +170,6 @@ app.post("/sign-up", function (req, res) {
 });
 
 app.get("/sign-out", function (req, res) {
-  console.log("logout");
   req.session.destroy();
   res.status(200);
   res.end();
@@ -162,30 +185,46 @@ app.get("/get-todos", function (req, res) {
   });
 });
 
-app.post("/save-todo", function (req, res) {
-  read("./todo.txt", function (err, data) {
-    if (err) {
-      res.end("Error in Reading Data from DB");
-    }
+app.post("/save-todo", upload.single("taskImage"), function (req, res) {
+  let taskText = req.body.taskText;
+  let taskImage = req.file;
 
-    let todos = [];
-
-    if (data.length > 0) {
-      todos = JSON.parse(data);
-    }
-    let newTodo = req.body;
-
-    todos.push(newTodo);
-
-    fs.writeFile("./todo.txt", JSON.stringify(todos), function (error) {
-      if (error) {
-        res.end("Error Ocurred while saving todos");
-      } else {
-        console.log("Saved Updated ToDos in DB");
-        res.end();
+  if (taskText != "" && taskImage != undefined) {
+    read("./todo.txt", function (err, data) {
+      if (err) {
+        res.end("Error in Reading Data from DB");
       }
+
+      let todos = [];
+
+      if (data.length > 0) {
+        todos = JSON.parse(data);
+      }
+
+      let newTodo = {
+        id: generateUniqueId(),
+        text: taskText,
+        image: taskImage.filename,
+        isCompleted: false,
+        createdBy: req.session.userId,
+      };
+
+      todos.push(newTodo);
+
+      fs.writeFile("./todo.txt", JSON.stringify(todos), function (error) {
+        if (error) {
+          res.end("Error Ocurred while saving todos");
+        } else {
+          console.log("Saved Updated ToDos in DB");
+          res.end();
+        }
+      });
+
+      res.redirect("/");
     });
-  });
+  } else {
+    res.redirect("/");
+  }
 });
 
 app.post("/delete-todo", function (req, res) {
@@ -235,12 +274,8 @@ app.post("/update-todo", function (req, res) {
       todos = JSON.parse(data);
     }
 
-    console.log("prev todos", todos);
-
     let obj = req.body;
     let taskId = obj.id;
-
-    console.log("rec obj is: ", obj);
 
     //* updating task completed status of selected task object in server
     todos.forEach(function (todo) {
@@ -248,15 +283,10 @@ app.post("/update-todo", function (req, res) {
         if (obj.hasOwnProperty("status")) {
           todo.isCompleted = obj.status;
         }
-
-        if (obj.hasOwnProperty("text")) {
-          todo.text = obj.text;
-        }
       }
     });
 
     fs.writeFile("./todo.txt", JSON.stringify(todos), function (error) {
-      console.log("updated todos", todos);
       if (error) {
         res.end("Error Ocurred while saving todos");
       } else {
@@ -266,6 +296,11 @@ app.post("/update-todo", function (req, res) {
     });
   });
 });
+
+//! Function to Generate Unique ID
+function generateUniqueId() {
+  return JSON.stringify(Math.floor(Math.random() * Date.now()));
+}
 
 app.listen(PORT, function () {
   console.log(`Server Running on PORT :: ${PORT}`);

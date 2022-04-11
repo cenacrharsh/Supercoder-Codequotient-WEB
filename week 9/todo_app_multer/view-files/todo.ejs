@@ -31,15 +31,22 @@
       </div>
 
       <div id="rightPaneDiv">
-        <div id="textAreaDiv">
-          <textarea
-            name=""
-            id="textArea"
-            cols="30"
-            rows="10"
-            placeholder="I need to..."
-          ></textarea>
-        </div>
+        <form action="/save-todo" method="POST" enctype="multipart/form-data">
+          <div id="textAreaDiv">
+            <textarea
+              name="taskText"
+              id="textArea"
+              cols="30"
+              rows="10"
+              placeholder="I need to..."
+            ></textarea>
+          </div>
+
+          <div id="imageUploadDiv">
+            <input type="file" name="taskImage" />
+            <input type="submit" value="Upload" class="btn" id="upload-btn" />
+          </div>
+        </form>
       </div>
     </div>
     <script src="js/todo.js"></script>
