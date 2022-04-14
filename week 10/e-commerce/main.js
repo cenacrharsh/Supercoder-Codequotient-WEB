@@ -10,14 +10,16 @@ const PORT = 3000;
 //# Database
 const db = require("./database");
 
-//! Initiate DB Connection
-db.init();
-
 //# Importing User Model
 const userModel = require("./database/models/user");
 
+//! Initiate DB Connection
+db.init();
+
 //! Middlewares
 app.use(express.static("uploads"));
+app.use(express.static("assets"));
+app.use(express.static("products"));
 app.use(express.urlencoded());
 
 //! Multer
@@ -40,90 +42,136 @@ app.set("view engine", "ejs");
 app.use(
   session({
     secret: "secret key",
-    resave: false,
-    saveUninitialized: true,
   })
 );
 
+//! Routes
 app.get("/", function (req, res) {
-  res.render("home");
-});
-
-app
-  .route("/signin")
-  .get(function (req, res) {
-    res.render("signin", { error: "" });
-  })
-  .post(function (req, res) {
-    const username = req.body.username;
-    const password = req.body.password;
-
-    userModel
-      .findOne({ username: username, password: password })
-      .then(function (user) {
-        req.session.isLoggedIn = true;
-        req.session.user = user;
-
-        res.redirect("/products");
-      })
-      .catch(function (err) {
-        console.log(err);
-        res.render("signin", { error: "Incorrect Username/Password !!!" });
-      });
-  });
-
-app
-  .route("/signup")
-  .get(function (req, res) {
-    res.render("signup", { error: "" });
-  })
-  .post(upload.single("avatar"), function (req, res) {
-    const username = req.body.username;
-    const password = req.body.password;
-    const avatarInfo = req.file;
-    console.log(username, password, avatar);
-
-    if (!username) {
-      res.render("signup", { error: "Please Enter Username" });
-    }
-
-    if (!password) {
-      res.render("signup", { error: "Please Enter Password" });
-    }
-
-    if (!avatar) {
-      res.render("signup", { error: "Please Upload Avatar" });
-    }
-
-    userModel
-      .create({
-        username: username,
-        password: password,
-        avatar: avatarInfo.filename,
-      })
-      .then(function () {
-        console.log("Successfully Signed Up !!!");
-        res.redirect("/signin");
-      })
-      .catch(function (err) {
-        console.log(err);
-        res.render("signup", { error: "Error Occured While Signing Up !!!" });
-      });
-  });
-
-app.get("/products", function (req, res) {
   const user = req.session.user;
+  console.log(user);
 
-  fs.readFile("./products.js", "utf-8", function (err, data) {
+  fs.readFile("./products/products.json", "utf-8", function (err, data) {
     if (err) {
       console.log("Error in Reading Products Page !!!");
     }
-    res.render("products", {
-      username: user.username,
-      avatar: user.avatar,
-      products: data,
+
+    let products = JSON.parse(data);
+
+    let requiredProducts = [];
+
+    for (let i = 0; i < Math.min(5, products.length); i++) {
+      requiredProducts.push(products[i]);
+    }
+
+    res.render("home", {
+      user: user === undefined ? null : user,
+      products: requiredProducts,
     });
   });
+});
+
+app.get("/get-products/:page", function (req, res) {
+  const user = req.session.user;
+
+  fs.readFile("./products/products.json", "utf-8", function (err, data) {
+    if (err) {
+      console.log("Error in Reading Products Page !!!");
+    }
+
+    let products = JSON.parse(data);
+    let maxPage = Math.ceil(products.length / 5);
+
+    let pageCount = req.params.page;
+
+    console.log("maxPage", maxPage);
+    console.log("page count", pageCount);
+
+    let requiredProducts = [];
+
+    for (let i = 0; i < Math.min(pageCount * 5, products.length); i++) {
+      requiredProducts.push(products[i]);
+    }
+
+    console.log("req prod: ", requiredProducts.length);
+
+    res.render("home", {
+      user: user === undefined ? null : user,
+      products: requiredProducts,
+    });
+  });
+});
+
+app.get("/auth", function (req, res) {
+  res.render("auth");
+});
+
+app.get("/signin", function (req, res) {
+  res.render("signin", { error: "" });
+});
+
+app.post("/create-session", function (req, res) {
+  const username = req.body.username;
+  const password = req.body.password;
+
+  userModel
+    .findOne({ username: username, password: password })
+    .then(function (user) {
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+
+      res.redirect("/");
+    })
+    .catch(function (err) {
+      console.log(err);
+      res.render("signin", { error: "Incorrect Username/Password !!!" });
+    });
+});
+
+app.get("/destroy-session", function (req, res) {
+  console.log("log out");
+  req.session.destroy();
+  res.redirect("/");
+});
+
+app.get("/signup", function (req, res) {
+  res.render("signup", { error: "" });
+});
+
+app.post("/create-user", upload.single("avatar"), function (req, res) {
+  const username = req.body.username;
+  const password = req.body.password;
+  const avatarInfo = req.file;
+
+  if (!username) {
+    res.render("signup", { error: "Please Enter Username" });
+  }
+
+  if (!password) {
+    res.render("signup", { error: "Please Enter Password" });
+  }
+
+  if (!avatarInfo) {
+    res.render("signup", { error: "Please Upload Avatar" });
+  }
+
+  userModel
+    .create({
+      username: username,
+      password: password,
+      avatar: avatarInfo.filename,
+    })
+    .then(function () {
+      console.log("Successfully Signed Up !!!");
+      res.redirect("/signin");
+    })
+    .catch(function (err) {
+      console.log(err);
+      res.render("signup", { error: "Error Occured While Signing Up !!!" });
+    });
+});
+
+app.get("/auth", function (req, res) {
+  res.render("auth");
 });
 
 app.listen(PORT, function () {

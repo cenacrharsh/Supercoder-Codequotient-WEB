@@ -1,0 +1,18 @@
+<link rel="stylesheet" href="/css/header.css" />
+<div id="header">
+  <div id="title"><h1>E-Commerce</h1></div>
+  <div id="user-info">
+    <% if(user) { %>
+    <div id="user-name"><%= user.username %></div>
+    <img id="user-avatar" src="<%= user.avatar %>" />
+
+    <form action="/destroy-session" method="GET">
+      <button id="signout-btn" class="btn">Sign Out</button>
+    </form>
+    <% } else { %>
+    <button id="signin-btn"><a href="/auth">Sign In</a></button>
+    <% } %>
+  </div>
+</div>
+
+<script src="/js/header.js"></script>

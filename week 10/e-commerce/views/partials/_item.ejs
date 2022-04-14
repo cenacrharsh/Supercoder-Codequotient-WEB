@@ -1,0 +1,29 @@
+<link rel="stylesheet" href="/css/item.css" />
+
+<div id="product-container">
+  <img src="<%= product.image %>" alt="<%= product.name %>" />
+  <h4><%= product.name %></h4>
+  <h4><%= product.price %></h4>
+
+  <!-- Trigger/Open Modal -->
+  <button class="myBtn btn">View Description</button>
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2><%= product.name %></h2>
+      </div>
+      <div class="modal-body">
+        <p>Description - <%= product.description %></p>
+      </div>
+      <div class="modal-footer">
+        <h3>Price - <%= product.price %></h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/item.js"></script>

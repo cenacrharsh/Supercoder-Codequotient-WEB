@@ -1,0 +1,39 @@
+#header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: teal;
+  padding: 10px;
+  height: 50px;
+}
+
+#title {
+  color: white;
+  font-weight: bold;
+}
+
+#user-name {
+  padding: 0px 5px;
+  margin: 0px 5px;
+}
+
+#user-avatar {
+  padding: 0px 5px;
+  margin: 0px 5px;
+}
+
+#signout-btn {
+}
+
+#user-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0px 10px;
+  padding: 0px 10px;
+}
+
+#user-avatar {
+  object-fit: cover;
+}

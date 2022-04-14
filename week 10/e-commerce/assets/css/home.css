@@ -1,0 +1,50 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  background-color: lightgray;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0px;
+  padding: 0px;
+}
+
+#products {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.btn {
+  background-color: #0066ff;
+  color: white;
+  width: 100%;
+  border: none;
+  outline: none;
+  margin: 10px 0px;
+  padding: 10px 0px;
+  font-weight: bold;
+  font-size: 17px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #0859d2;
+  font-size: 18px;
+}
+
+#load-more {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#load-more-btn {
+  padding: 10px;
+}

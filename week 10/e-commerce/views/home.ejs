@@ -1,9 +1,21 @@
-<a href="/signin">
-  <button>Sign In</button>
-</a>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap"
+  rel="stylesheet"
+/>
 
-<br />
+<link rel="stylesheet" href="/css/home.css" />
 
-<a href="/signup">
-  <button>Sign Up</button>
-</a>
+<%- include("partials/_header",{user : user}) %>
+
+<div id="products">
+  <% products.forEach(function(product) { %> <%-
+  include("partials/_item.ejs",{product : product}) %> <% }); %>
+</div>
+
+<div id="load-more">
+    <button type="submit" id="load-more-btn" class="btn">Load More</button>
+</div>
+
+<script src="/js/home.js"></script>
