@@ -22,6 +22,10 @@ app.use(express.static("assets"));
 app.use(express.static("products"));
 app.use(express.urlencoded());
 
+//! Mailjet
+const sendMail = require("./utils/sendMail");
+const { is } = require("express/lib/request");
+
 //! Multer
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
@@ -48,7 +52,6 @@ app.use(
 //! Routes
 app.get("/", function (req, res) {
   const user = req.session.user;
-  console.log(user);
 
   fs.readFile("./products/products.json", "utf-8", function (err, data) {
     if (err) {
@@ -110,14 +113,15 @@ app.get("/signin", function (req, res) {
 });
 
 app.post("/create-session", function (req, res) {
-  const username = req.body.username;
+  const email = req.body.email;
   const password = req.body.password;
 
   userModel
-    .findOne({ username: username, password: password })
+    .findOne({ email: email, password: password })
     .then(function (user) {
       req.session.isLoggedIn = true;
       req.session.user = user;
+      console.log("user", user);
 
       res.redirect("/");
     })
@@ -127,47 +131,103 @@ app.post("/create-session", function (req, res) {
     });
 });
 
-app.get("/destroy-session", function (req, res) {
-  console.log("log out");
-  req.session.destroy();
-  res.redirect("/");
-});
-
 app.get("/signup", function (req, res) {
   res.render("signup", { error: "" });
 });
 
 app.post("/create-user", upload.single("avatar"), function (req, res) {
-  const username = req.body.username;
+  const name = req.body.name;
+  const email = req.body.email;
   const password = req.body.password;
+  const confirmPassword = req.body.confirmPassword;
   const avatarInfo = req.file;
 
-  if (!username) {
+  if (!name) {
     res.render("signup", { error: "Please Enter Username" });
+  }
+
+  if (!email) {
+    res.render("signup", { error: "Please Enter Email" });
   }
 
   if (!password) {
     res.render("signup", { error: "Please Enter Password" });
   }
 
+  if (!confirmPassword) {
+    res.render("signup", { error: "Please Enter Confirm Password" });
+  }
+
   if (!avatarInfo) {
     res.render("signup", { error: "Please Upload Avatar" });
   }
 
+  if (password !== confirmPassword) {
+    res.render("signup", { error: "Passwords Don't Match" });
+  }
+
   userModel
     .create({
-      username: username,
+      name: name,
+      email: email,
       password: password,
       avatar: avatarInfo.filename,
+      isVerifiedEmail: false,
     })
     .then(function () {
-      console.log("Successfully Signed Up !!!");
-      res.redirect("/signin");
+      let html = `<h1>Click <a href="http://localhost:3000/verifyUser/${email}">here</a> to Verify !!!</h1>`;
+
+      sendMail(name, email, "Welcome To E-Commerce", html, function (error) {
+        if (error) {
+          res.render("signup", { error: "Unable to Send Email" });
+        } else {
+          console.log("Successfully Signed Up !!!");
+          res.redirect("/signin");
+        }
+      });
     })
     .catch(function (err) {
       console.log(err);
       res.render("signup", { error: "Error Occured While Signing Up !!!" });
     });
+});
+
+app.get("/verifyUser/:email", function (req, res) {
+  const email = req.params.email;
+
+  userModel.findOne({ email: email }).then(function (user) {
+    if (user) {
+      //* Check if user is already verified
+      if (user.isVerifiedEmail) {
+        res.send(
+          `<h1>User Already Verified, Continue to <a href = "/signin">Login !!!</a></h1>`
+        );
+      } else {
+        //* verify user
+        userModel.findOneAndUpdate(
+          { email: email },
+          { isVerifiedEmail: true },
+          function (err, user) {
+            if (err) {
+              console.log("Error In Verifying User");
+            } else {
+              res.send(
+                `<h1>User Verification Complete, Continue to <a href = "/signin">Login !!!</a></h1>`
+              );
+            }
+          }
+        );
+      }
+    } else {
+      res.send("<h1>User Verification Failed !!!</h1>");
+    }
+  });
+});
+
+app.get("/destroy-session", function (req, res) {
+  console.log("log out");
+  req.session.destroy();
+  res.redirect("/");
 });
 
 app.get("/auth", function (req, res) {

@@ -21,14 +21,15 @@
 #user-avatar {
   padding: 0px 5px;
   margin: 0px 5px;
-}
-
-#signout-btn {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
 }
 
 #user-info {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
   margin: 0px 10px;
   padding: 0px 10px;
@@ -36,4 +37,13 @@
 
 #user-avatar {
   object-fit: cover;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+  color: white;
 }
