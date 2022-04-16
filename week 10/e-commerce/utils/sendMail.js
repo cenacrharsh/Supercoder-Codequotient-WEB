@@ -21,7 +21,7 @@ module.exports = function sendMail(name, email, title, html, callback) {
           },
         ],
         Subject: title,
-        TextPart: "My first Mailjet email",
+        TextPart: "E-Commerce Verification Mail",
         HTMLPart: html,
         CustomID: "AppGettingStartedTest",
       },
@@ -29,9 +29,10 @@ module.exports = function sendMail(name, email, title, html, callback) {
   });
   request
     .then((result) => {
-      callback();
+      callback(result, null);
     })
     .catch((err) => {
-      callback("Error Occured while Sending Mail !!!");
+      console.log(err);
+      callback(null, err);
     });
 };

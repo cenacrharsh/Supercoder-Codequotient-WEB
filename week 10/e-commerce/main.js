@@ -51,9 +51,9 @@ app.use(
 
 //! Routes
 app.get("/", function (req, res) {
-  const user = req.session.user;
-
   fs.readFile("./products/products.json", "utf-8", function (err, data) {
+    const user = req.session.user;
+
     if (err) {
       console.log("Error in Reading Products Page !!!");
     }
@@ -119,9 +119,20 @@ app.post("/create-session", function (req, res) {
   userModel
     .findOne({ email: email, password: password })
     .then(function (user) {
+      //* check if user exists
+      if (!user) {
+        res.render("signin", "User Doesn't Exist !!!");
+        return;
+      }
+
+      //* check if user has verified email
+      if (user.isVerifiedEmail === false) {
+        res.render("signin", { error: "Email Id Not Verified !!!" });
+        return;
+      }
+
       req.session.isLoggedIn = true;
       req.session.user = user;
-      console.log("user", user);
 
       res.redirect("/");
     })
@@ -167,28 +178,56 @@ app.post("/create-user", upload.single("avatar"), function (req, res) {
   }
 
   userModel
-    .create({
-      name: name,
-      email: email,
-      password: password,
-      avatar: avatarInfo.filename,
-      isVerifiedEmail: false,
-    })
-    .then(function () {
-      let html = `<h1>Click <a href="http://localhost:3000/verifyUser/${email}">here</a> to Verify !!!</h1>`;
+    .findOne({ email: email })
+    .then(function (user) {
+      if (user) {
+        res.render("signup", {
+          error: `${user.email} is Already Registered !!!`,
+        });
+        res.end();
+      } else {
+        //* if user doesn't already exists in DB, create new user
+        userModel
+          .create({
+            name: name,
+            email: email,
+            password: password,
+            avatar: avatarInfo.filename,
+            isVerifiedEmail: false,
+          })
+          .then(function () {
+            let html = `<h1>Click <a href="http://localhost:3000/verifyUser/${email}">here</a> to Verify your Account !!!</h1>`;
 
-      sendMail(name, email, "Welcome To E-Commerce", html, function (error) {
-        if (error) {
-          res.render("signup", { error: "Unable to Send Email" });
-        } else {
-          console.log("Successfully Signed Up !!!");
-          res.redirect("/signin");
-        }
-      });
+            sendMail(
+              name,
+              email,
+              "Welcome To E-Commerce",
+              html,
+              function (result, err) {
+                if (err) {
+                  res.render("signup", {
+                    error: "Error Occured while Sending Mail !!!",
+                  });
+                } else {
+                  console.log("Successfully Signed Up !!!");
+                  res.redirect("/signin");
+                }
+              }
+            );
+          })
+          .catch(function (err) {
+            console.log(err);
+            res.render("signup", {
+              error: "Error Occured While Signing Up !!!",
+            });
+          });
+      }
     })
     .catch(function (err) {
-      console.log(err);
-      res.render("signup", { error: "Error Occured While Signing Up !!!" });
+      console.log(
+        "Error Occured While Searching For User in DB During SignUp !!!"
+      );
+      res.end();
     });
 });
 
@@ -225,8 +264,8 @@ app.get("/verifyUser/:email", function (req, res) {
 });
 
 app.get("/destroy-session", function (req, res) {
-  console.log("log out");
   req.session.destroy();
+  console.log("Successfully Logged Out !!!");
   res.redirect("/");
 });
 
