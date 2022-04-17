@@ -9,6 +9,10 @@
 
 <%- include("partials/_header",{user : user}) %>
 
+<div id="cart-btn">
+  <button id="view-cart-btn" class="btn">View Cart</button#>
+</div>
+
 <div id="products">
   <% products.forEach(function(product) { %> <%-
   include("partials/_item.ejs",{product : product}) %> <% }); %>

@@ -17,6 +17,6 @@ function loadMoreBtnHandler(event) {
   request.open("GET", `/get-products/${pageCount}`);
   request.send();
   request.addEventListener("load", function (event) {
-    window.location.reload();
+    console.log("Loaded More Products !!!");
   });
 }

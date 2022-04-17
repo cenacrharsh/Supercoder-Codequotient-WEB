@@ -52,7 +52,8 @@ app.use(
 //! Routes
 app.get("/", function (req, res) {
   fs.readFile("./products/products.json", "utf-8", function (err, data) {
-    const user = req.session.user;
+    let user = req.session.user;
+    let pageCount = req.session.pageCount;
 
     if (err) {
       console.log("Error in Reading Products Page !!!");
@@ -61,6 +62,8 @@ app.get("/", function (req, res) {
     let products = JSON.parse(data);
 
     let requiredProducts = [];
+
+    let numProducts = pageCount ? 5 * pageCount : 1;
 
     for (let i = 0; i < Math.min(5, products.length); i++) {
       requiredProducts.push(products[i]);
@@ -75,33 +78,42 @@ app.get("/", function (req, res) {
 
 app.get("/get-products/:page", function (req, res) {
   const user = req.session.user;
+  console.log(user);
 
-  fs.readFile("./products/products.json", "utf-8", function (err, data) {
-    if (err) {
-      console.log("Error in Reading Products Page !!!");
-    }
-
-    let products = JSON.parse(data);
-    let maxPage = Math.ceil(products.length / 5);
-
+  if (user === undefined) {
+    res.render("auth");
+  } else {
     let pageCount = req.params.page;
+    req.session.pageCount = pageCount;
+    res.redirect("/");
+  }
 
-    console.log("maxPage", maxPage);
-    console.log("page count", pageCount);
+  // fs.readFile("./products/products.json", "utf-8", function (err, data) {
+  //   if (err) {
+  //     console.log("Error in Reading Products Page !!!");
+  //   }
 
-    let requiredProducts = [];
+  //   let products = JSON.parse(data);
+  //   let maxPage = Math.ceil(products.length / 5);
 
-    for (let i = 0; i < Math.min(pageCount * 5, products.length); i++) {
-      requiredProducts.push(products[i]);
-    }
+  //   let pageCount = req.params.page;
 
-    console.log("req prod: ", requiredProducts.length);
+  //   console.log("maxPage", maxPage);
+  //   console.log("page count", pageCount);
 
-    res.render("home", {
-      user: user === undefined ? null : user,
-      products: requiredProducts,
-    });
-  });
+  //   let requiredProducts = [];
+
+  //   for (let i = 0; i < Math.min(pageCount * 5, products.length); i++) {
+  //     requiredProducts.push(products[i]);
+  //   }
+
+  //   console.log("req prod: ", requiredProducts.length);
+
+  //   res.render("home", {
+  //     user: user === undefined ? null : user,
+  //     products: requiredProducts,
+  //   });
+  // });
 });
 
 app.get("/auth", function (req, res) {
@@ -133,6 +145,7 @@ app.post("/create-session", function (req, res) {
 
       req.session.isLoggedIn = true;
       req.session.user = user;
+      req.session.pageCount = 1;
 
       res.redirect("/");
     })

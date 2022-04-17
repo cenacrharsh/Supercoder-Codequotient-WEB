@@ -6,12 +6,19 @@
   justify-content: space-evenly;
   width: 300px;
   height: 400px;
-  margin: 25px;
-  padding: 25px;
+  margin: 25px 45px;
+  padding: 30px;
+  border-radius: 10px;
 }
 
 #product-container > img {
   object-fit: contain;
+}
+
+#util-btn {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 /* # MODAL */
