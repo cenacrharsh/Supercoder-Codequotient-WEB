@@ -1,13 +1,13 @@
 <link rel="stylesheet" href="/css/item.css" />
 
-<div id="product-container">
+<div class="product-container" id="<%= product.id %>">
   <img src="<%= product.image %>" alt="<%= product.name %>" />
   <h4><%= product.name %></h4>
   <h4><%= product.price %></h4>
 
   <!-- Trigger/Open Modal -->
   <div id="util-btn">
-    <button class="btn">Add To Cart</button>
+    <button class="add-to-cart-btn btn">Add To Cart</button>
     <button class="myBtn btn">View Description</button>
   </div>
 

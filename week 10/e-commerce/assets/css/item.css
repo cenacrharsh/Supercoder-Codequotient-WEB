@@ -1,5 +1,5 @@
 /* # PRODUCT */
-#product-container {
+.product-container {
   background-color: whitesmoke;
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@
   border-radius: 10px;
 }
 
-#product-container > img {
+.product-container > img {
   object-fit: contain;
 }
 

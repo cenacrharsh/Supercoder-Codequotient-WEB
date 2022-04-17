@@ -21,6 +21,7 @@ app.use(express.static("uploads"));
 app.use(express.static("assets"));
 app.use(express.static("products"));
 app.use(express.urlencoded());
+app.use(express.json());
 
 //! Mailjet
 const sendMail = require("./utils/sendMail");
@@ -285,6 +286,13 @@ app.get("/destroy-session", function (req, res) {
 app.get("/auth", function (req, res) {
   res.render("auth");
 });
+
+//! Cart
+app.post("/add-to-cart", function (req, res) {
+  console.log(req.body);
+});
+
+//! Admin
 
 app.listen(PORT, function () {
   console.log(`Server is Running on PORT :: ${PORT}`);
