@@ -12,6 +12,7 @@ const db = require("./database");
 
 //# Importing User Model
 const userModel = require("./database/models/user");
+const cartModel = require("./database/models/cart");
 
 //! Initiate DB Connection
 db.init();
@@ -289,7 +290,44 @@ app.get("/auth", function (req, res) {
 
 //! Cart
 app.post("/add-to-cart", function (req, res) {
-  console.log(req.body);
+  var user = null;
+
+  if (!req.session.isLoggedIn) {
+    res.status(401).json({
+      status: false,
+      message: "Please Login to Continue !!!",
+      data: null,
+    });
+
+    return;
+  }
+
+  user = req.session.user;
+
+  //* get product_id of product to add in cart
+  var responseObject = req.body;
+  console.log(responseObject);
+
+  var product_id = responseObject.productId;
+  console.log(product_id);
+
+  cartModel
+    .create({
+      product_id: product_id,
+      user_id: user._id,
+      product_name: "abc",
+      product_description: "xxx",
+      product_image: "https://google.com",
+      product_price: 500,
+      product_quantity: 2,
+    })
+    .then(function () {
+      res.status(200).json({
+        status: true,
+        message: "Product Added To Cart Successfully !!!",
+        data: null,
+      });
+    });
 });
 
 //! Admin

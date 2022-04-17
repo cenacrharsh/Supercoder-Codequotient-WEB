@@ -30,16 +30,26 @@ var addToCartBtns = document.getElementsByClassName("add-to-cart-btn");
 for (let i = 0; i < addToCartBtns.length; i++) {
   addToCartBtns[i].onclick = function (event) {
     let productContainerDivNode = event.target.parentNode.parentNode;
+    let addToCartBtn = productContainerDivNode.children[3].children[0];
     let productId = productContainerDivNode.getAttribute("id");
 
-    handleAddToCart(productId);
+    handleAddToCart(productId, addToCartBtn);
   };
 }
 
-function handleAddToCart(productId) {
+function handleAddToCart(productId, button) {
   var request = new XMLHttpRequest();
   request.open("POST", `/add-to-cart`);
   request.setRequestHeader("Content-Type", "application/json");
   request.send(JSON.stringify({ productId: productId }));
-  request.addEventListener("load", function () {});
+  request.addEventListener("load", function (event) {
+    if (request.status === 401) {
+      alert("Please Login To Add Products To Cart !!!");
+      window.location.href = "/auth";
+    } else if (request.status === 200) {
+      button.disabled = true;
+      button.style.backgroundColor = "lightgrey";
+      console.log("Product Added To Cart Successfully !!!");
+    }
+  });
 }
